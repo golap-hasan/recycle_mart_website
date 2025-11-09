@@ -2,10 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Moon, Sun, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
 import { promoMessages } from "./shared";
+import { Separator } from "@/components/ui/separator";
 
 export default function NavTop() {
   const [promoIndex, setPromoIndex] = useState(0);
@@ -41,38 +47,47 @@ export default function NavTop() {
     : "transition-none";
 
   return (
-    <section className="border-b border-gray-600">
+    <section className="border-b">
       {/* Mobile Top Row */}
       <div className="flex md:hidden h-10 items-center justify-end px-4 text-sm">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-auto p-0 flex items-center text-white">
+            <Button variant="ghost" size="sm" className="text-xs">
               My Account
-              <ChevronDown className="h-3 w-3 ml-1" />
+              <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Orders</DropdownMenuItem>
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem>Check Out</DropdownMenuItem>
+            <DropdownMenuItem>Sign In</DropdownMenuItem>
+            <DropdownMenuItem>Register</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="h-4 w-px bg-border mx-3"></div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-auto p-0 flex items-center text-white">
-              USD
-              <ChevronDown className="h-3 w-3 ml-1" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>USD</DropdownMenuItem>
-            <DropdownMenuItem>EUR</DropdownMenuItem>
-            <DropdownMenuItem>GBP</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        {mounted && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="group relative rounded-full h-6 w-6"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            <Moon
+              className={`absolute h-5 w-5 transition-all ${
+                theme === "dark" ? "scale-100 opacity-100" : "scale-0 opacity-0"
+              }`}
+              aria-hidden="true"
+            />
+            <Sun
+              className={`h-5 w-5 transition-all ${
+                theme === "dark" ? "scale-0 opacity-0" : "scale-100 opacity-100"
+              }`}
+              aria-hidden="true"
+            />
+          </Button>
+        )}
       </div>
-      <div className="custom-width mx-auto hidden md:flex h-9 text-sm items-center justify-between px-6 xl:px-0">
+      <div className="custom-width mx-auto hidden md:flex h-9 text-sm items-center justify-between px-6">
         <div className="relative h-full min-w-0 flex-1 overflow-hidden">
           <span
             className={`absolute inset-0 flex items-center ${transitionClass} ${
@@ -89,41 +104,54 @@ export default function NavTop() {
             {nextMessage}
           </span>
         </div>
-        <div className="flex items-center space-x-6 text-sm">
-          <Button variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent text-white">
-            Gift Certificates
+
+        <div className="flex h-5 items-center space-x-4 text-sm">
+          <Button variant="ghost" size="sm" className="tracking-widest text-xs">
+            GIFT CERTIFICATES
           </Button>
-          <div className="h-4 w-px bg-border"></div>
+          <Separator orientation="vertical" />
+          {/* <div className="h-4 w-px bg-border"></div> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent text-white">
-                My Account
+              <Button
+                variant="ghost"
+                size="sm"
+                className="tracking-widest text-xs"
+              >
+                MY ACCOUNT
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Orders</DropdownMenuItem>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>Check Out</DropdownMenuItem>
+              <DropdownMenuItem>Sign In</DropdownMenuItem>
+              <DropdownMenuItem>Register</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <div className="h-4 w-px bg-border"></div>
+          {/* <div className="h-4 w-px bg-border"></div> */}
+          <Separator orientation="vertical" />
           {mounted && (
             <Button
               variant="ghost"
               size="icon"
-              className="group relative rounded-full hidden md:flex p-0 text-white"
+              className="group relative rounded-full h-7 w-7"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              aria-label={`Switch to ${
+                theme === "dark" ? "light" : "dark"
+              } mode`}
             >
               <Moon
                 className={`absolute h-5 w-5 transition-all ${
-                  theme === "dark" ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                  theme === "dark"
+                    ? "scale-100 opacity-100"
+                    : "scale-0 opacity-0"
                 }`}
                 aria-hidden="true"
               />
               <Sun
                 className={`h-5 w-5 transition-all ${
-                  theme === "dark" ? "scale-0 opacity-0" : "scale-100 opacity-100"
+                  theme === "dark"
+                    ? "scale-0 opacity-0"
+                    : "scale-100 opacity-100"
                 }`}
                 aria-hidden="true"
               />
