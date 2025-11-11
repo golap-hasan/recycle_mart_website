@@ -79,7 +79,7 @@ const NavMiddle = () => {
           </Link>
           <Button
             size="sm"
-            className="flex items-center gap-2 rounded-full bg-linear-to-r from-amber-400 to-orange-500 px-5 py-2 text-sm font-semibold text-white shadow-lg hover:from-amber-300 hover:to-orange-400"
+            className="flex items-center gap-2 rounded-full bg-linear-to-r from-pink-400 to-orange-500 px-5 py-4 text-sm font-semibold text-white hover:from-pink-300 hover:to-orange-400"
           >
             <PlusCircle className="h-4 w-4" />
             Create listing
@@ -93,7 +93,7 @@ const NavMiddle = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="border-white/30 bg-white/10 text-white hover:bg-white/20"
+                className="border-white/30 bg-white/10 text-white hover:bg-white/20 rounded-full"
               >
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open menu</span>
@@ -169,7 +169,7 @@ const NavMiddle = () => {
                   </div>
                 </div>
                 <div className="mt-auto border-t border-border px-6 py-6">
-                  <Button className="w-full gap-2 rounded-full bg-linear-to-r from-amber-400 to-orange-500 text-base font-semibold text-white shadow-lg hover:from-amber-300 hover:to-orange-400">
+                  <Button className="w-full gap-2 rounded-full bg-linear-to-r from-pink-400 to-orange-500 text-base font-semibold text-white shadow-lg hover:from-pink-300 hover:to-orange-400">
                     <PlusCircle className="h-5 w-5" />
                     Create listing
                   </Button>
