@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import PageLayout from "@/tools/PageLayout";
+import { Input } from "@/components/ui/input";
 import {
   Facebook,
   Instagram,
@@ -8,42 +9,54 @@ import {
   Twitter,
   Youtube,
   Globe,
+  MapPin,
+  Phone,
+  Mail,
 } from "lucide-react";
 
 const infoColumns = [
   {
-    title: "আরও জানুন",
+    title: "Company & Legal",
     links: [
-      { label: "ফ্রি বিজ্ঞাপন দিন", href: "/sell" },
-      { label: "মেম্বারশিপ", href: "/membership" },
-      { label: "ব্যবসা সমাধান", href: "/business" },
-      { label: "অ্যাড গাইড", href: "/guides" },
+      { label: "About Us", href: "/about" },
+      { label: "Press", href: "/press" },
+      { label: "Terms & Conditions", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy" },
     ],
   },
   {
-    title: "হেল্প ও সাপোর্ট",
+    title: "Help & Support",
     links: [
-      { label: "প্রশ্নোত্তর", href: "/help" },
-      { label: "নিরাপদ থাকুন", href: "/safety" },
-      { label: "যোগাযোগ", href: "/contact" },
+      { label: "FAQs", href: "/help" },
+      { label: "Stay Safe", href: "/safety" },
+      { label: "Contact Us", href: "/contact" },
     ],
   },
   {
-    title: "আমাদের কথা",
-    links: [
-      { label: "কোম্পানি", href: "/about" },
-      { label: "প্রেস", href: "/press" },
-      { label: "শর্তাবলি", href: "/terms" },
-      { label: "গোপনীয়তা", href: "/privacy" },
-    ],
-  },
-  {
-    title: "গাইড এবং ব্লগ",
+    title: "Guides & Blog",
     links: [
       { label: "MotorGuide BD", href: "/guides/motor" },
       { label: "PropertyGuide BD", href: "/guides/property" },
-      { label: "অফিশিয়াল ব্লগ", href: "/blog" },
+      { label: "Official Blog", href: "/blog" },
     ],
+  },
+];
+
+const contactDetails = [
+  {
+    icon: MapPin,
+    label: "House 105, Road 12, Banani",
+    description: "Dhaka 1213, Bangladesh",
+  },
+  {
+    icon: Phone,
+    label: "+880 1302-000000",
+    description: "Support: 10am – 10pm",
+  },
+  {
+    icon: Mail,
+    label: "support@allpricebd.com",
+    description: "We reply within 24 hours",
   },
 ];
 
@@ -57,93 +70,96 @@ const socials = [
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border/40 bg-muted/20 text-sm">
-      <PageLayout>
-        <div className="grid gap-10 lg:grid-cols-5 max-w-7xl mx-auto">
-          {infoColumns.map(({ title, links }) => (
-            <div key={title} className="space-y-3">
-              <p className="text-base font-semibold text-foreground">{title}</p>
-              <ul className="space-y-2 text-muted-foreground">
-                {links.map(({ label, href }) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="transition hover:text-foreground"
-                    >
-                      {label}
-                    </Link>
-                  </li>
+    <footer className="relative overflow-hidden border-t border-border/20 text-sm text-muted-foreground">
+      <div className="relative">
+        <div className="container custom-width mx-auto flex flex-col gap-12 px-6 py-16">
+          <div className="flex flex-col gap-8 rounded-3xl border border-border/30 bg-background/70 p-8 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
+            <div className="space-y-2">
+              <p className="text-xl font-semibold text-foreground">Subscribe for the latest updates</p>
+              <p className="text-sm text-muted-foreground">
+                Fresh listings, pricing trends, and buying tips straight to your inbox.
+              </p>
+            </div>
+            <form className="flex w-full max-w-xl flex-col gap-3 md:flex-row">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="h-11 rounded-full border-border/40 bg-background/80 text-sm"
+              />
+              <Button type="submit" className="h-11 rounded-full px-6 text-sm font-semibold">
+                Subscribe
+              </Button>
+            </form>
+          </div>
+
+          <Separator className="bg-border/30" />
+
+          <div className="grid gap-12 text-sm text-muted-foreground lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))]">
+            <div className="space-y-5 text-foreground">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Globe className="h-5 w-5" />
+                </div>
+                <p className="text-lg font-semibold">All Price BD</p>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Bangladesh&rsquo;s trusted marketplace for buying and selling everything—from electronics and vehicles to property and services.
+              </p>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                {contactDetails.map(({ icon: Icon, label, description }) => (
+                  <div key={label} className="flex items-start gap-3">
+                    <Icon className="mt-1 h-4 w-4 text-primary" />
+                    <div>
+                      <p className="font-medium text-foreground">{label}</p>
+                      <p className="text-xs text-muted-foreground/80">{description}</p>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-          ))}
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <p className="text-base font-semibold text-foreground">
-                আমাদের অ্যাপ
-              </p>
-              <p className="text-xs text-muted-foreground">
-                ডাউনলোড করুন এবং দ্রুত কিনুন-বেচুন।
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Button
-                variant="outline"
-                className="w-full justify-start rounded-xl border-border/60 px-4 py-3 text-left text-xs font-semibold"
-              >
-                Get it on Google Play
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start rounded-xl border-border/60 px-4 py-3 text-left text-xs font-semibold"
-              >
-                Download on the App Store
-              </Button>
-            </div>
-            <div className="space-y-2 pt-2">
-              <p className="text-base font-semibold text-foreground">
-                অন্য দেশ
-              </p>
-              <Link
-                href="https://srilanka.example.com"
-                className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
-              >
-                <span role="img" aria-hidden className="text-lg">
-                  🇱🇰
-                </span>
-                Sri Lanka
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-12 flex flex-col gap-6 border-t border-border/40 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} All Price BD. All rights reserved.
-            </p>
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-foreground"
-            >
-              <Globe className="h-4 w-4" /> All Price BD
-            </Link>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {socials.map(({ label, href, icon: Icon }) => (
-              <Link
-                key={label}
-                href={href}
-                aria-label={label}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-primary/40 hover:text-primary"
-              >
-                <Icon className="h-4 w-4" />
-              </Link>
+            {infoColumns.map(({ title, links }) => (
+              <div key={title} className="space-y-4">
+                <p className="text-sm font-semibold uppercase tracking-wide text-foreground">
+                  {title}
+                </p>
+                <ul className="space-y-2 text-sm">
+                  {links.map(({ label, href }) => (
+                    <li key={label}>
+                      <Link
+                        href={href}
+                        className="inline-flex items-center gap-2 transition hover:text-foreground"
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
+
+          <Separator className="bg-border/30" />
+
+          <div className="flex flex-col items-center justify-between gap-4 text-xs sm:flex-row">
+            <p className="text-center sm:text-left">
+              © {new Date().getFullYear()} All Price BD. All rights reserved.
+            </p>
+            <div className="flex items-center gap-3">
+              {socials.map(({ label, href, icon: Icon }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground transition hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+                >
+                  <Icon className="h-4 w-4" />
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
-      </PageLayout>
+      </div>
     </footer>
   );
 };
