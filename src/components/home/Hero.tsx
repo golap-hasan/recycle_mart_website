@@ -15,19 +15,19 @@ const heroSlides = [
   {
     id: 1,
     href: "/ads/featured",
-    imageSrc: "/images/hero/featured-vehicles.jpg",
+    imageSrc: "https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg",
     alt: "Discover featured vehicles from trusted sellers",
   },
   {
     id: 2,
     href: "/ads/electronics",
-    imageSrc: "/images/hero/flash-deals.jpg",
+    imageSrc: "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg",
     alt: "View the latest electronics flash deals",
   },
   {
     id: 3,
     href: "/ads/property",
-    imageSrc: "/images/hero/property-market.jpg",
+    imageSrc: "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg",
     alt: "Browse trending properties across Bangladesh",
   },
 ] as const;
@@ -40,13 +40,13 @@ type SideAd = {
 
 const leftAd: SideAd = {
   href: "/pricing",
-  imageSrc: "/images/home/ads/boost-your-ad.jpg",
+  imageSrc: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg",
   alt: "Promote your listing to reach more buyers",
 };
 
 const rightAd: SideAd = {
   href: "/delivery",
-  imageSrc: "/images/home/ads/nationwide-delivery.jpg",
+  imageSrc: "https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg",
   alt: "Book nationwide delivery with end-to-end tracking",
 };
 
@@ -92,7 +92,7 @@ const Hero = () => {
             <SideAdLink {...leftAd} />
           </aside>
 
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-2">
+          <div className="relative overflow-hidden rounded-3xl border border-border bg-card">
             <Carousel
               className="w-full"
               setApi={setCarouselApi}
@@ -106,13 +106,14 @@ const Hero = () => {
                   <CarouselItem key={slide.id} className="pl-0">
                     <Link
                       href={slide.href}
-                      className="group block overflow-hidden rounded-3xl"
+                      className="group block overflow-hidden rounded-3xl h-[500px]"
                     >
                       <Image
                         src={slide.imageSrc}
                         alt={slide.alt}
                         width={960}
                         height={480}
+                        unoptimized
                         priority={slide.id === 1}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
@@ -120,8 +121,6 @@ const Hero = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {/* <CarouselPrevious className="-left-4 top-1/2 -translate-y-1/2 border-border bg-card text-foreground shadow hover:bg-muted" />
-              <CarouselNext className="-right-4 top-1/2 -translate-y-1/2 border-border bg-card text-foreground shadow hover:bg-muted" /> */}
             </Carousel>
           </div>
 
@@ -142,7 +141,7 @@ const Hero = () => {
 const SideAdLink = ({ href, imageSrc, alt }: SideAd) => (
   <Link
     href={href}
-    className="group block h-full overflow-hidden rounded-3xl border border-border bg-card transition hover:border-primary/40"
+    className="group block h-[500px] overflow-hidden rounded-3xl border border-border bg-card transition hover:border-primary/40"
   >
     <Image
       src={imageSrc}

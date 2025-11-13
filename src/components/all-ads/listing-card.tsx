@@ -26,7 +26,7 @@ const ListingCard = ({
 }: ListingCardProps) => {
   return (
     <article className="group relative overflow-hidden rounded-3xl border border-border/40 bg-background/90 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-      <Link href={`/ads/${id}`} className="flex h-full flex-col">
+      <Link href={`/all-ads/${id}`} className="flex h-full flex-col">
         <div className="relative aspect-4/3 overflow-hidden">
           <Image
             src={imageUrl}

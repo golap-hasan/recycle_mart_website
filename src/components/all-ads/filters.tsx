@@ -48,8 +48,8 @@ const defaultFilters: FilterGroup[] = [
     id: "price",
     title: "Price Range (BDT)",
     type: "slider",
-    sliderRange: [0, 500000],
-    sliderStep: 5000,
+    sliderRange: [0, 50000],
+    sliderStep: 20,
   },
 ];
 
@@ -160,18 +160,27 @@ const Filters = ({ groups = defaultFilters, onChange }: FiltersProps) => {
               ) : null}
 
               {group.type === "slider" && group.sliderRange ? (
-                <div className="space-y-3">
-                  <Slider
-                    min={group.sliderRange[0]}
-                    max={group.sliderRange[1]}
-                    step={group.sliderStep ?? 1}
-                    value={(selected[group.id] as number[]) ?? [group.sliderRange[0], group.sliderRange[1]]}
-                    onValueChange={(value) => updateSlider(group.id, value)}
-                    className="w-full"
-                  />
-                  <div className="flex items-center justify-between text-xs font-semibold text-foreground">
-                    <span>BDT {(selected[group.id] as number[])?.[0] ?? group.sliderRange[0]}</span>
-                    <span>BDT {(selected[group.id] as number[])?.[1] ?? group.sliderRange[1]}</span>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-foreground">Select Range</span>
+                      <span className="text-xs text-muted-foreground">
+                        ৳ {(selected[group.id] as number[])?.[0]?.toLocaleString() ?? group.sliderRange[0].toLocaleString()} - 
+                        ৳ {(selected[group.id] as number[])?.[1]?.toLocaleString() ?? group.sliderRange[1].toLocaleString()}
+                      </span>
+                    </div>
+                    <Slider
+                      min={group.sliderRange[0]}
+                      max={group.sliderRange[1]}
+                      step={group.sliderStep ?? 1}
+                      value={(selected[group.id] as number[]) ?? [group.sliderRange[0], group.sliderRange[1]]}
+                      onValueChange={(value) => updateSlider(group.id, value)}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Min: ৳ {group.sliderRange[0].toLocaleString()}</span>
+                    <span>Max: ৳ {group.sliderRange[1].toLocaleString()}</span>
                   </div>
                 </div>
               ) : null}

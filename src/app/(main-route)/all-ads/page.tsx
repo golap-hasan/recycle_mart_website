@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import CustomBreadcrumb from "@/tools/CustomBreadcrumb";
 import AllAdsExplorer from "@/components/all-ads/AllAdsExplorer";
+import PageLayout from "@/tools/PageLayout";
 
 export const metadata: Metadata = {
   title: "All Ads | All Price BD",
@@ -23,9 +16,9 @@ const sampleListings = [
     price: "৳ 135,000",
     location: "Banani, Dhaka",
     postedAt: "2 hours ago",
-    imageUrl: "https://images.pexels.com/photos/5081398/pexels-photo-5081398.jpeg",
-    isFeatured: true,
-    isUrgent: false,
+    imageUrl:
+      "https://images.pexels.com/photos/5081398/pexels-photo-5081398.jpeg",
+    isUrgent: true,
   },
   {
     id: "gaming-pc",
@@ -33,9 +26,8 @@ const sampleListings = [
     price: "৳ 95,000",
     location: "Mirpur, Dhaka",
     postedAt: "Yesterday",
-    imageUrl: "https://images.pexels.com/photos/2115257/pexels-photo-2115257.jpeg",
-    isFeatured: false,
-    isUrgent: true,
+    imageUrl:
+      "https://images.pexels.com/photos/2115257/pexels-photo-2115257.jpeg",
   },
   {
     id: "toyota-premio",
@@ -43,9 +35,8 @@ const sampleListings = [
     price: "৳ 2,150,000",
     location: "Chattogram",
     postedAt: "3 days ago",
-    imageUrl: "https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg",
-    isFeatured: true,
-    isUrgent: true,
+    imageUrl:
+      "https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg",
   },
   {
     id: "family-apartment",
@@ -53,9 +44,9 @@ const sampleListings = [
     price: "৳ 90,000 / month",
     location: "Bashundhara, Dhaka",
     postedAt: "5 days ago",
-    imageUrl: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
-    isFeatured: false,
-    isUrgent: false,
+    imageUrl:
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+    isUrgent: true,
   },
   {
     id: "dslr-kit",
@@ -64,8 +55,6 @@ const sampleListings = [
     location: "Sylhet",
     postedAt: "1 week ago",
     imageUrl: "https://images.pexels.com/photos/64609/pexels-photo-64609.jpeg",
-    isFeatured: false,
-    isUrgent: false,
   },
   {
     id: "office-space",
@@ -73,18 +62,16 @@ const sampleListings = [
     price: "৳ 2,50,000 / month",
     location: "Gulshan 1, Dhaka",
     postedAt: "1 week ago",
-    imageUrl: "https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg",
-    isFeatured: false,
+    imageUrl:
+      "https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg",
     isUrgent: true,
   },
 ];
 
 const breadcrumbs = [
-  { label: "Home", href: "/" },
-  { label: "All Ads", href: "/all-ads" },
-  { label: "Bangladesh" },
+  { name: "Home", href: "/" },
+  { name: "All Ads", isCurrent: true },
 ];
-
 const sortOptions = [
   { value: "newest", label: "Date: Newest first" },
   { value: "oldest", label: "Date: Oldest first" },
@@ -101,27 +88,16 @@ const locationOptions = [
 
 const AllAdsPage = () => {
   return (
-    <main className="bg-muted/10">
-      <section className="container custom-width mx-auto space-y-8 px-6 py-10">
-        <Breadcrumb>
-          <BreadcrumbList>
-            {breadcrumbs.map((item, index) => (
-              <BreadcrumbItem key={item.label}>
-                {item.href ? (
-                  <BreadcrumbLink asChild>
-                    <Link href={item.href}>{item.label}</Link>
-                  </BreadcrumbLink>
-                ) : (
-                  <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                )}
-                {index < breadcrumbs.length - 1 ? <BreadcrumbSeparator /> : null}
-              </BreadcrumbItem>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
-        <AllAdsExplorer listings={sampleListings} sortOptions={sortOptions} locationOptions={locationOptions} />
-      </section>
-    </main>
+    <PageLayout paddingSize="small">
+      <div className="max-w-7xl mx-auto">
+        <CustomBreadcrumb links={breadcrumbs} />
+        <AllAdsExplorer
+          listings={sampleListings}
+          sortOptions={sortOptions}
+          locationOptions={locationOptions}
+        />
+      </div>
+    </PageLayout>
   );
 };
 

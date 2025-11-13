@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Facebook,
   Instagram,
@@ -70,31 +68,11 @@ const socials = [
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden border-t border-border/20 text-sm text-muted-foreground">
+    <footer className="relative overflow-hidden border-t border-border/20 text-sm text-muted-foreground bg-primary/20">
       <div className="relative">
-        <div className="container custom-width mx-auto flex flex-col gap-12 px-6 py-16">
-          <div className="flex flex-col gap-8 rounded-3xl border border-border/30 bg-background/70 p-8 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
-            <div className="space-y-2">
-              <p className="text-xl font-semibold text-foreground">Subscribe for the latest updates</p>
-              <p className="text-sm text-muted-foreground">
-                Fresh listings, pricing trends, and buying tips straight to your inbox.
-              </p>
-            </div>
-            <form className="flex w-full max-w-xl flex-col gap-3 md:flex-row">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="h-11 rounded-full border-border/40 bg-background/80 text-sm"
-              />
-              <Button type="submit" className="h-11 rounded-full px-6 text-sm font-semibold">
-                Subscribe
-              </Button>
-            </form>
-          </div>
+        <div className="flex flex-col gap-8 px-6 py-8">
 
-          <Separator className="bg-border/30" />
-
-          <div className="grid gap-12 text-sm text-muted-foreground lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))]">
+          <div className="container max-w-7xl mx-auto grid gap-12 text-sm text-muted-foreground lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))]">
             <div className="space-y-5 text-foreground">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -141,7 +119,7 @@ const Footer = () => {
 
           <Separator className="bg-border/30" />
 
-          <div className="flex flex-col items-center justify-between gap-4 text-xs sm:flex-row">
+          <div className="container max-w-7xl mx-auto flex flex-col items-center justify-between gap-4 text-xs sm:flex-row">
             <p className="text-center sm:text-left">
               © {new Date().getFullYear()} All Price BD. All rights reserved.
             </p>

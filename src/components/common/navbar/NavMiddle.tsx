@@ -38,7 +38,7 @@ const NavMiddle = () => {
         <div className="hidden lg:flex flex-1 items-center gap-6">
           <div className="flex flex-1 items-center justify-center gap-3">
             <Link
-              href="/ads"
+              href="/all-ads"
               className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/20"
             >
               <ListTree className="h-4 w-4 text-white/80" />

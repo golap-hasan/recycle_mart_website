@@ -127,16 +127,14 @@ const toSlug = (value: string) =>
 const Category = () => {
   return (
     <section className="relative overflow-hidden">
-      <div className="pointer-events-none absolute bottom-0 right-0 h-1/1 w-1/1 bg-linear-to-tl from-primary/20 via-background/60 to-transparent" />
-      <div className="pointer-events-none absolute top-0 left-0 h-1/1 w-1/1 bg-linear-to-tr from-primary/20 via-background/60 to-transparent" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-88 w-88 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/15 blur-3xl" />
       <PageLayout>
         <div className="space-y-2 pb-10">
           <div className="mx-auto max-w-3xl space-y-2 text-center">
-            <span className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+            <span className="text-sm font-semibold uppercase tracking-[0.3em] text-foreground">
               Browse the marketplace
             </span>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
               Categories curated for every need
             </h2>
             <p className="mx-auto max-w-2xl text-base text-muted-foreground">
