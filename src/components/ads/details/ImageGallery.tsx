@@ -83,11 +83,11 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
       )}
 
       {/* Image Counter */}
-      {images.length > 1 && (
+      {/* {images.length > 1 && (
         <div className="text-center text-sm text-muted-foreground">
           {currentIndex + 1} of {images.length} photos
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -56,3 +56,60 @@ export const sampleListings = [
     isUrgent: true,
   },
 ];
+
+// Sample ad data - in real app, this would come from API/database
+export const sampleAd = {
+  id: "apple-iphone-14",
+  title: "Apple iPhone 14 Pro Max 256GB (Used)",
+  price: "৳ 135,000",
+  originalPrice: "৳ 150,000",
+  location: "Banani, Dhaka",
+  postedAt: "2 hours ago",
+  views: 1247,
+  condition: "Used",
+  category: "Mobiles",
+  brand: "Apple",
+  model: "iPhone 14 Pro Max",
+  storage: "256GB",
+  color: "Deep Purple",
+  description: `Brand new sealed Apple iPhone 14 Pro Max 256GB Deep Purple.
+
+Features:
+• 6.7-inch Super Retina XDR display
+• Pro camera system with 48MP main camera
+• A16 Bionic chip
+• Dynamic Island
+• Ceramic Shield front
+• Surgical-grade stainless steel
+• All-day battery life
+• iOS 16
+
+Comes with original box, charger, and warranty card. Never used, still sealed.`,
+  images: [
+    "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg",
+    "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg",
+    "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg",
+    "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg",
+  ],
+  isFeatured: true,
+  isUrgent: false,
+  seller: {
+    id: "seller-1",
+    name: "Rahul Ahmed",
+    avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
+    memberSince: "January 2023",
+    rating: 4.8,
+    totalAds: 15,
+    verified: true,
+    phone: "+880 1712-345678",
+    location: "Dhaka, Bangladesh",
+  },
+  specifications: [
+    { label: "Brand", value: "Apple" },
+    { label: "Model", value: "iPhone 14 Pro Max" },
+    { label: "Storage", value: "256GB" },
+    { label: "Color", value: "Deep Purple" },
+    { label: "Condition", value: "Used - Like New" },
+    { label: "Warranty", value: "Apple Warranty" },
+  ],
+};

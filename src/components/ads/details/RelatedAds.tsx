@@ -54,7 +54,7 @@ export default function RelatedAds({ currentAdId, category }: RelatedAdsProps) {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Related Ads</h2>
         <Link
-          href={`/all-ads?category=${encodeURIComponent(category)}`}
+          href={`/ads?category=${encodeURIComponent(category)}`}
           className="text-sm text-primary hover:underline"
         >
           View all {category} ads →
@@ -64,7 +64,7 @@ export default function RelatedAds({ currentAdId, category }: RelatedAdsProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {relatedAds.map((ad) => (
           <div key={ad.id} className="overflow-hidden hover:shadow-lg transition-shadow rounded-xl border border-border/40 bg-card">
-            <Link href={`/all-ads/${ad.id}`}>
+            <Link href={`/ads/${ad.id}`}>
               <div className="relative aspect-4/3 overflow-hidden">
                 <Image
                   src={ad.imageUrl}

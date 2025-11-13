@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Shield, MapPin, Calendar } from "lucide-react";
+import { Shield, MapPin, Calendar } from "lucide-react";
 
 type Seller = {
   id: string;
@@ -43,9 +43,6 @@ export default function SellerInfo({ seller }: SellerInfoProps) {
               )}
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span>{seller.rating}</span>
-              <span>•</span>
               <span>{seller.totalAds} ads</span>
             </div>
           </div>
@@ -60,28 +57,6 @@ export default function SellerInfo({ seller }: SellerInfoProps) {
           <div className="flex items-center gap-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />
             <span>{seller.location}</span>
-          </div>
-        </div>
-
-        {/* Rating Breakdown */}
-        <div className="pt-2 border-t">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Seller Rating</span>
-            <div className="flex items-center gap-1">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(seller.rating)
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="font-medium ml-1">{seller.rating}</span>
-            </div>
           </div>
         </div>
 

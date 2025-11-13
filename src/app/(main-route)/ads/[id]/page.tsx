@@ -15,69 +15,14 @@ import CustomBreadcrumb from "@/tools/CustomBreadcrumb";
 import PageLayout from "@/tools/PageLayout";
 import SellerInfo from "@/components/ads/details/SellerInfo";
 import RelatedAds from "@/components/ads/details/RelatedAds";
-import Image from "next/image";
-
-// Sample ad data - in real app, this would come from API/database
-const sampleAd = {
-  id: "apple-iphone-14",
-  title: "Apple iPhone 14 Pro Max 256GB (Used)",
-  price: "৳ 135,000",
-  originalPrice: "৳ 150,000",
-  location: "Banani, Dhaka",
-  postedAt: "2 hours ago",
-  views: 1247,
-  condition: "Used",
-  category: "Mobiles",
-  brand: "Apple",
-  model: "iPhone 14 Pro Max",
-  storage: "256GB",
-  color: "Deep Purple",
-  description: `Brand new sealed Apple iPhone 14 Pro Max 256GB Deep Purple.
-
-Features:
-• 6.7-inch Super Retina XDR display
-• Pro camera system with 48MP main camera
-• A16 Bionic chip
-• Dynamic Island
-• Ceramic Shield front
-• Surgical-grade stainless steel
-• All-day battery life
-• iOS 16
-
-Comes with original box, charger, and warranty card. Never used, still sealed.`,
-  images: [
-    "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg",
-    "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg",
-    "https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg",
-    "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg",
-  ],
-  isFeatured: true,
-  isUrgent: false,
-  seller: {
-    id: "seller-1",
-    name: "Rahul Ahmed",
-    avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-    memberSince: "January 2023",
-    rating: 4.8,
-    totalAds: 15,
-    verified: true,
-    phone: "+880 1712-345678",
-    location: "Dhaka, Bangladesh",
-  },
-  specifications: [
-    { label: "Brand", value: "Apple" },
-    { label: "Model", value: "iPhone 14 Pro Max" },
-    { label: "Storage", value: "256GB" },
-    { label: "Color", value: "Deep Purple" },
-    { label: "Condition", value: "Used - Like New" },
-    { label: "Warranty", value: "Apple Warranty" },
-  ],
-};
+import ImageGallery from "@/components/ads/details/ImageGallery";
+import { sampleAd } from "@/components/ads/adsData";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
+// Generate metadata for the ad details page
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
 
@@ -126,7 +71,7 @@ export default async function AdDetailsPage({ params }: Props) {
 
   const breadcrumbs = [
     { name: "Home", href: "/" },
-    { name: "All Ads", href: "/all-ads" },
+    { name: "Ads", href: "/ads" },
     {
       name: ad.title.length > 50 ? ad.title.slice(0, 50) + "..." : ad.title,
       isCurrent: true,
@@ -135,159 +80,155 @@ export default async function AdDetailsPage({ params }: Props) {
 
   return (
     <PageLayout paddingSize="small">
-      <CustomBreadcrumb links={breadcrumbs} />
+      <div className="max-w-7xl mx-auto">
+        <CustomBreadcrumb links={breadcrumbs} />
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Back Button */}
+            <Link
+              href="/ads"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Ads
+            </Link>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Back Button */}
-          <Link
-            href="/all-ads"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to All Ads
-          </Link>
-
-          {/* Image Gallery */}
-          <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-border/40 bg-muted/20">
-            <Image
-              src={ad.images[0]}
-              alt={ad.title}
-              fill
-              className="object-cover"
-              priority
-            />
+            {/* Image Gallery */}
+            <ImageGallery images={ad.images} title={ad.title} />
           </div>
 
-          {/* Product Info */}
-          <div className="rounded-xl border border-border/40 bg-card p-6">
-            <div className="space-y-4">
-              {/* Title and Badges */}
-              <div className="space-y-2">
-                <div className="flex items-start justify-between gap-4">
-                  <h1 className="text-2xl font-bold text-foreground">
-                    {ad.title}
-                  </h1>
-                  <div className="flex items-center gap-2">
-                    <button className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center">
-                      <Heart className="h-4 w-4" />
-                    </button>
-                    <button className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center">
-                      <Share2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Contact Actions */}
+            <div className="rounded-xl border border-border/40 bg-card p-6">
+              <div className="space-y-4">
+                <button className="w-full h-11 bg-primary text-primary-foreground rounded-lg font-semibold flex items-center justify-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  Call Seller
+                </button>
+                <button className="w-full h-11 border border-border rounded-lg flex items-center justify-center gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Send Message
+                </button>
+              </div>
+            </div>
 
-                {ad.isFeatured && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    Featured
-                  </span>
-                )}
-                {ad.isUrgent && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2">
-                    Urgent
-                  </span>
-                )}
+            {/* Seller Info */}
+            <SellerInfo seller={ad.seller} />
+
+            {/* Safety Tips */}
+            <div className="rounded-xl border border-border/40 bg-card p-6">
+              <h3 className="font-semibold mb-3">Safety Tips</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Meet in public places</li>
+                <li>• Check item before buying</li>
+                <li>• Use secure payment methods</li>
+                <li>• Report suspicious ads</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Info - Full Width */}
+        <div className="mt-8 rounded-xl border border-border/40 bg-card p-6">
+          <div className="space-y-4">
+            {/* Title and Badges */}
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="text-2xl font-bold text-foreground">
+                  {ad.title}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <button className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center">
+                    <Heart className="h-4 w-4" />
+                  </button>
+                  <button className="h-8 w-8 rounded-full hover:bg-muted flex items-center justify-center">
+                    <Share2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Price */}
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-primary">
-                  {ad.price}
+              {ad.isFeatured && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  Featured
                 </span>
-                {ad.originalPrice && (
-                  <span className="text-lg text-muted-foreground line-through">
-                    {ad.originalPrice}
-                  </span>
-                )}
-              </div>
-
-              {/* Location and Date */}
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {ad.location}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  {ad.postedAt}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Eye className="h-4 w-4" />
-                  {ad.views} views
-                </div>
-              </div>
-
-              <hr className="bg-border/30 h-px border-0" />
-
-              {/* Description */}
-              <div className="space-y-2">
-                <h2 className="text-lg font-semibold">Description</h2>
-                <div className="prose prose-sm max-w-none text-muted-foreground">
-                  <p>{ad.description}</p>
-                </div>
-              </div>
-
-              {/* Specifications */}
-              {ad.specifications && ad.specifications.length > 0 && (
-                <>
-                  <hr className="bg-border/30 h-px border-0" />
-                  <div className="space-y-3">
-                    <h2 className="text-lg font-semibold">Specifications</h2>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {ad.specifications.map((spec, index) => (
-                        <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-muted-foreground">
-                            {spec.label}:
-                          </span>
-                          <span className="text-sm font-medium">
-                            {spec.value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
+              )}
+              {ad.isUrgent && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2">
+                  Urgent
+                </span>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Contact Actions */}
-          <div className="rounded-xl border border-border/40 bg-card p-6">
-            <div className="space-y-4">
-              <button className="w-full h-11 bg-primary text-primary-foreground rounded-lg font-semibold flex items-center justify-center gap-2">
-                <Phone className="h-4 w-4" />
-                Call Seller
-              </button>
-              <button className="w-full h-11 border border-border rounded-lg flex items-center justify-center gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Send Message
-              </button>
+            {/* Price */}
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl font-bold text-primary">
+                {ad.price}
+              </span>
+              {ad.originalPrice && (
+                <span className="text-lg text-muted-foreground line-through">
+                  {ad.originalPrice}
+                </span>
+              )}
             </div>
-          </div>
 
-          {/* Seller Info */}
-          <SellerInfo seller={ad.seller} />
+            {/* Location and Date */}
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                {ad.location}
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                {ad.postedAt}
+              </div>
+              <div className="flex items-center gap-1">
+                <Eye className="h-4 w-4" />
+                {ad.views} views
+              </div>
+            </div>
 
-          {/* Safety Tips */}
-          <div className="rounded-xl border border-border/40 bg-card p-6">
-            <h3 className="font-semibold mb-3">Safety Tips</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>• Meet in public places</li>
-              <li>• Check item before buying</li>
-              <li>• Use secure payment methods</li>
-              <li>• Report suspicious ads</li>
-            </ul>
+            <hr className="bg-border/30 h-px border-0" />
+
+            {/* Description */}
+            <div className="space-y-2">
+              <h2 className="text-lg font-semibold">Description</h2>
+              <div className="prose prose-sm max-w-none text-muted-foreground">
+                <p>{ad.description}</p>
+              </div>
+            </div>
+
+            {/* Specifications */}
+            {ad.specifications && ad.specifications.length > 0 && (
+              <>
+                <hr className="bg-border/30 h-px border-0" />
+                <div className="space-y-3">
+                  <h2 className="text-lg font-semibold">Specifications</h2>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {ad.specifications.map((spec, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between py-1"
+                      >
+                        <span className="text-sm text-muted-foreground">
+                          {spec.label}:
+                        </span>
+                        <span className="text-sm font-medium">
+                          {spec.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Related Ads */}
-      <RelatedAds currentAdId={ad.id} category={ad.category} />
+        {/* Related Ads */}
+        <RelatedAds currentAdId={ad.id} category={ad.category} />
+      </div>
     </PageLayout>
   );
 }

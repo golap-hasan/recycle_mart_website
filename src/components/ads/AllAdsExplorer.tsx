@@ -123,7 +123,7 @@ export default function AllAdsExplorer({
               <div className="grid gap-4 grid-cols-1">
                 {listings.map((listing) => (
                   <article key={listing.id} className="group relative overflow-hidden rounded-2xl border border-border/40 bg-background/90 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                    <Link href={`/all-ads/${listing.id}`} className="flex h-full">
+                    <Link href={`/ads/${listing.id}`} className="flex h-full">
                       <div className="relative w-32 h-32 shrink-0 overflow-hidden rounded-l-2xl">
                         <Image
                           src={listing.imageUrl}
@@ -175,7 +175,7 @@ export default function AllAdsExplorer({
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {listings.map((listing) => (
                   <article key={listing.id} className="group relative overflow-hidden rounded-3xl border border-border/40 bg-background/90 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                    <Link href={`/all-ads/${listing.id}`} className="flex h-full flex-col">
+                    <Link href={`/ads/${listing.id}`} className="flex h-full flex-col">
                       <div className="relative aspect-4/3 overflow-hidden">
                         <Image
                           src={listing.imageUrl}
