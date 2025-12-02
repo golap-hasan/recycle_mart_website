@@ -6,9 +6,9 @@ import { sampleListings } from "@/components/ads/adsData";
 import { sortOptions, locationOptions } from "@/components/ads/filters";
 
 export const metadata: Metadata = {
-  title: "All Ads | All Price BD",
+  title: "All Ads | Recycle Mart",
   description:
-    "Browse the latest listings across Bangladesh. Filter by category, price, location, and more to find the perfect deal on All Price BD.",
+    "Browse the latest listings across Bangladesh. Filter by category, price, location, and more to find the perfect deal on Recycle Mart.",
 };
 
 const breadcrumbs = [

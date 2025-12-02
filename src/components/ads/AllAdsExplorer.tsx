@@ -53,11 +53,11 @@ export default function AllAdsExplorer({
 
       <Tabs defaultValue="list" className="w-full">
         <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-4">
-          <TabsTrigger value="list" className="rounded-full flex items-center gap-2">
+          <TabsTrigger value="list" className="flex items-center gap-2">
             <List className="h-4 w-4" />
             List View
           </TabsTrigger>
-          <TabsTrigger value="grid" className="rounded-full flex items-center gap-2">
+          <TabsTrigger value="grid" className="flex items-center gap-2">
             <Grid3X3 className="h-4 w-4" />
             Grid View
           </TabsTrigger>
@@ -129,7 +129,6 @@ export default function AllAdsExplorer({
                           src={listing.imageUrl}
                           alt={listing.title}
                           fill
-                          unoptimized
                           className="object-cover transition duration-300 group-hover:scale-105"
                           sizes="128px"
                         />
@@ -181,7 +180,6 @@ export default function AllAdsExplorer({
                           src={listing.imageUrl}
                           alt={listing.title}
                           fill
-                          unoptimized
                           className="object-cover transition duration-300 group-hover:scale-105"
                           sizes="(min-width: 1024px) 320px, (min-width: 768px) 45vw, 90vw"
                         />

@@ -113,7 +113,7 @@ export default function NavBottom() {
 
         {/* Action Icons (Desktop) */}
         <div className="hidden lg:flex items-center gap-3">
-          <Link href="/wishlist">
+          <Link href="/profile/favourites">
             <Button className="h-10 flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-white/30">
               <Heart className="h-4 w-4" />
               Favorites

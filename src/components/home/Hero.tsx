@@ -97,8 +97,7 @@ const Hero = () => {
                       src={slide.imageSrc}
                       alt={slide.title}
                       fill
-                      unoptimized
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover"
                       priority={slide.id === 1}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -121,7 +120,7 @@ const Hero = () => {
 
         {/* Side Banners */}
         <div className="hidden lg:flex flex-col gap-6 h-full">
-          <Link href="/safety" className="relative flex-1 overflow-hidden rounded-3xl bg-orange-50 group shadow-lg">
+          <Link href="/ads?verified=true" className="relative flex-1 overflow-hidden rounded-3xl bg-orange-50 group shadow-lg">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
                 <span className="inline-flex p-2 rounded-full bg-orange-100 text-orange-600 mb-3">
@@ -139,12 +138,11 @@ const Hero = () => {
               src="https://images.pexels.com/photos/4467687/pexels-photo-4467687.jpeg?auto=compress&cs=tinysrgb&w=600"
               alt="Safety"
               fill
-              unoptimized
               className="object-cover opacity-10 group-hover:opacity-20 transition-opacity"
             />
           </Link>
 
-          <Link href="/urgent" className="relative flex-1 overflow-hidden rounded-3xl bg-purple-50 group shadow-lg">
+          <Link href="/ads?urgent=true" className="relative flex-1 overflow-hidden rounded-3xl bg-purple-50 group shadow-lg">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
                 <span className="inline-flex p-2 rounded-full bg-purple-100 text-purple-600 mb-3">
@@ -162,12 +160,11 @@ const Hero = () => {
               src="https://images.pexels.com/photos/6214476/pexels-photo-6214476.jpeg?auto=compress&cs=tinysrgb&w=600"
               alt="Urgent"
               fill
-              unoptimized
               className="object-cover opacity-10 group-hover:opacity-20 transition-opacity"
             />
           </Link>
 
-          <Link href="/premium" className="relative flex-1 overflow-hidden rounded-3xl bg-emerald-50 group shadow-lg">
+          <Link href="/ads?premium=true" className="relative flex-1 overflow-hidden rounded-3xl bg-emerald-50 group shadow-lg">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
                 <span className="inline-flex p-2 rounded-full bg-emerald-100 text-emerald-600 mb-3">
@@ -185,7 +182,6 @@ const Hero = () => {
               src="https://images.pexels.com/photos/699459/pexels-photo-699459.jpeg?auto=compress&cs=tinysrgb&w=600"
               alt="Premium"
               fill
-              unoptimized
               className="object-cover opacity-10 group-hover:opacity-20 transition-opacity"
             />
           </Link>
