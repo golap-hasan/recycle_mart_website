@@ -15,6 +15,7 @@ import SellerInfo from "@/components/ads/details/SellerInfo";
 import RelatedAds from "@/components/ads/details/RelatedAds";
 import ImageGallery from "@/components/ads/details/ImageGallery";
 import { sampleAd } from "@/components/ads/adsData";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -96,10 +97,10 @@ export default async function AdDetailsPage({ params }: Props) {
                   <Phone className="h-4 w-4" />
                   Call Seller
                 </button>
-                <button className="w-full h-11 border border-border rounded-lg flex items-center justify-center gap-2">
+                <Link href={"/chat"} className="w-full h-11 border border-border rounded-lg flex items-center justify-center gap-2">
                   <MessageCircle className="h-4 w-4" />
                   Send Message
-                </button>
+                </Link>
               </div>
             </div>
 

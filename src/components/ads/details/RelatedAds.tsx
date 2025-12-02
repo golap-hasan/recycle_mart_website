@@ -36,6 +36,26 @@ const sampleRelatedAds = [
     isFeatured: true,
     isUrgent: true,
   },
+  {
+    id: "dslr-kits",
+    title: "Canon EOS R6 with 24-105mm Lens (Warranty)",
+    price: "৳ 195,000",
+    location: "Sylhet",
+    postedAt: "1 week ago",
+    imageUrl: "https://images.pexels.com/photos/64609/pexels-photo-64609.jpeg",
+    isFeatured: false,
+    isUrgent: false,
+  },
+  {
+    id: "toyota-premiow",
+    title: "Toyota Premio 2017 (Registered 2019)",
+    price: "৳ 2,150,000",
+    location: "Chattogram",
+    postedAt: "3 days ago",
+    imageUrl: "https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg",
+    isFeatured: true,
+    isUrgent: true,
+  },
 ];
 
 type RelatedAdsProps = {
@@ -45,7 +65,7 @@ type RelatedAdsProps = {
 
 export default function RelatedAds({ currentAdId, category }: RelatedAdsProps) {
   // Filter out current ad and limit to 3
-  const relatedAds = sampleRelatedAds.filter(ad => ad.id !== currentAdId).slice(0, 3);
+  const relatedAds = sampleRelatedAds.filter(ad => ad.id !== currentAdId).slice(0, 5);
 
   if (relatedAds.length === 0) return null;
 
@@ -61,10 +81,10 @@ export default function RelatedAds({ currentAdId, category }: RelatedAdsProps) {
         </Link>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
         {relatedAds.map((ad) => (
           <div key={ad.id} className="overflow-hidden hover:shadow-lg transition-shadow rounded-xl border border-border/40 bg-card">
-            <Link href={`/ads/${ad.id}`}>
+            <Link href={`/ads/apple-iphone-14`}>
               <div className="relative aspect-4/3 overflow-hidden">
                 <Image
                   src={ad.imageUrl}
