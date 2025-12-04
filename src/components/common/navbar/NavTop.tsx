@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, ChevronDown } from "lucide-react";
+import { Moon, Sun, ChevronDown, Ticket } from "lucide-react";
 import { useTheme } from "next-themes";
 import { promoMessages } from "./shared";
 import { Separator } from "@/components/ui/separator";
@@ -50,7 +50,16 @@ export default function NavTop() {
   return (
     <section className="border-b border-white/15 text-white">
       {/* Mobile Top Row */}
-      <div className="flex md:hidden h-10 items-center justify-end px-5 text-sm text-white">
+      <div className="flex md:hidden h-10 items-center justify-end px-5 text-sm text-white gap-2">
+        <Link href="/lottery">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-white hover:text-yellow-300"
+          >
+            <Ticket/>
+          </Button>
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -120,15 +129,17 @@ export default function NavTop() {
         </div>
 
         <div className="flex h-5 items-center space-x-4 text-sm text-white">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="tracking-widest text-xs text-white"
-          >
-            GIFT CERTIFICATES
-          </Button>
+          <Link href="/lottery">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="tracking-widest text-xs text-white gap-2 hover:text-yellow-300 transition-colors"
+            >
+              <Ticket />
+              LOTTERY
+            </Button>
+          </Link>
           <Separator orientation="vertical" className="bg-white" />
-          {/* <div className="h-4 w-px bg-border"></div> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -154,7 +165,6 @@ export default function NavTop() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {/* <div className="h-4 w-px bg-border"></div> */}
           <Separator orientation="vertical" className="bg-white" />
           {mounted && (
             <Button
