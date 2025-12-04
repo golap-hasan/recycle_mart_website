@@ -73,7 +73,7 @@ const Hero = () => {
     <section className="relative py-6">
       <div className="grid gap-6 lg:grid-cols-[1fr_300px] h-[500px] lg:h-[600px]">
         {/* Main Carousel */}
-        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+        <div className="relative overflow-hidden shadow-2xl">
           <Carousel
             className="w-full h-full"
             setApi={setCarouselApi}
@@ -102,7 +102,7 @@ const Hero = () => {
 
         {/* Side Banners */}
         <div className="hidden lg:flex flex-col gap-6 h-full">
-          <Link href="/ads?verified=true" className="relative flex-1 overflow-hidden rounded-3xl bg-orange-50 group shadow-lg">
+          <Link href="/ads?verified=true" className="relative flex-1 overflow-hidden bg-orange-50 group shadow-lg">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
                 <span className="inline-flex p-2 rounded-full bg-orange-100 text-orange-600 mb-3">
@@ -124,7 +124,7 @@ const Hero = () => {
             />
           </Link>
 
-          <Link href="/ads?urgent=true" className="relative flex-1 overflow-hidden rounded-3xl bg-purple-50 group shadow-lg">
+          <Link href="/ads?urgent=true" className="relative flex-1 overflow-hidden bg-purple-50 group shadow-lg">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
                 <span className="inline-flex p-2 rounded-full bg-purple-100 text-purple-600 mb-3">
@@ -146,7 +146,7 @@ const Hero = () => {
             />
           </Link>
 
-          <Link href="/ads?premium=true" className="relative flex-1 overflow-hidden rounded-3xl bg-emerald-50 group shadow-lg">
+          <Link href="/ads?premium=true" className="relative flex-1 overflow-hidden bg-emerald-50 group shadow-lg">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
                 <span className="inline-flex p-2 rounded-full bg-emerald-100 text-emerald-600 mb-3">

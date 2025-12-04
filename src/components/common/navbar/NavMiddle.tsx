@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Menu,
   MapPin,
@@ -9,6 +10,9 @@ import {
   ListTree,
   Globe,
   PlusCircle,
+  Search,
+  Heart,
+  MenuIcon,
 } from "lucide-react";
 
 import {
@@ -18,8 +22,47 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const NavMiddle = () => {
+  const toSlug = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+
+  const categories = [
+    {
+      title: "Mobiles",
+      items: ["Smartphones", "Android Tablets", "Wearables"],
+    },
+    {
+      title: "Electronics and Gadgets",
+      items: ["Laptops", "Headphones", "Smart Home"],
+    },
+    {
+      title: "Vehicles",
+      items: ["Cars", "Motorcycles", "Parts & Accessories"],
+    },
+    {
+      title: "Home Living",
+      items: ["Furniture", "Kitchen & Dining", "Decor"],
+    },
+    {
+      title: "Property",
+      items: ["Apartments", "Commercial Space", "Land"],
+    },
+    {
+      title: "Others",
+      items: [
+        "Air Conditioners",
+        "Refrigerators",
+        "Washing Machines",
+        "Microwaves",
+      ],
+    },
+  ];
+
   return (
     <div className="text-white">
       <div className="container mx-auto flex items-center justify-between py-4 px-5">
@@ -80,8 +123,80 @@ const NavMiddle = () => {
           <Link href="/ads/create"><Button size="sm" className="flex items-center gap-2 rounded-full bg-linear-to-r from-pink-400 to-orange-500 px-5 py-4.5 text-sm font-semibold text-white hover:from-pink-300 hover:to-orange-400"><PlusCircle className="h-4 w-4" />Post an Ad for Free</Button></Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="lg:hidden">
+        {/* Mobile & Tablet View */}
+        <div className="flex items-center gap-2 lg:hidden">
+          {/* Categories Menu (Mobile) */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-white/30 bg-white/10 text-white hover:bg-white/20 rounded-full"
+              >
+                <MenuIcon className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="left"
+              className="border-white/20 bg-primary/95 text-white"
+            >
+              <SheetHeader className="border-b border-white/20">
+                <SheetTitle className="text-white/85">Categories</SheetTitle>
+              </SheetHeader>
+              <ScrollArea className="h-full px-6 py-4">
+                <nav className="space-y-4 text-sm">
+                  {categories.map((category) => (
+                    <div key={category.title} className="space-y-2">
+                      <Link href={`/ads?category=${toSlug(category.title)}`} className="block font-semibold">
+                        {category.title}
+                      </Link>
+                      <div className="flex flex-wrap gap-2 text-white/80">
+                        {category.items.map((item) => (
+                          <Link
+                            key={item}
+                            href={`/ads?category=${toSlug(item)}`}
+                            className="rounded-full border border-white/25 px-3 py-1 text-xs transition hover:bg-white/15"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </nav>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
+
+          {/* Search Bar (Tablet) */}
+          <div className="hidden md:flex flex-1 mx-3 max-w-md">
+            <div className="relative w-full">
+              <Input
+                type="search"
+                placeholder="Search marketplace..."
+                className="h-10 rounded-full border-white/30 bg-white/10 pr-11 text-sm font-medium text-white placeholder:text-white/70"
+              />
+              <Button
+                size="icon"
+                className="absolute right-1 top-1 h-8 w-8 rounded-full bg-white/15 text-white hover:bg-white/25"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Favorites Button */}
+          <Link href="/profile/favourites">
+            <Button 
+              size="icon" 
+              className="flex items-center gap-2 rounded-full bg-white/20 px-3 py-2 text-sm font-semibold text-white shadow transition hover:bg-white/30"
+            >
+              <Heart className="h-4 w-4" />
+              <span className="hidden sm:inline">Saved</span>
+            </Button>
+          </Link>
+
+          {/* Main Menu (Mobile) */}
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -94,7 +209,7 @@ const NavMiddle = () => {
               </Button>
             </SheetTrigger>
             <SheetContent
-              side="left"
+              side="right"
               className="w-[320px] border-white/20 bg-primary/95 p-0 text-white"
             >
               <SheetHeader className="px-6 py-4">
