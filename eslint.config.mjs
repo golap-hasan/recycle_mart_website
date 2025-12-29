@@ -23,7 +23,7 @@ const eslintConfig = defineConfig([
       "comma-spacing": ["warn", { "before": false, "after": true }],
       // "semi": ["warn", "always"],
       // "quotes": ["warn", "double"],
-      "indent": ["warn", 2, { "SwitchCase": 1 }],
+      // "indent": ["warn", 2, { "SwitchCase": 1 }],
     }
   },
   // Override default ignores of eslint-config-next.

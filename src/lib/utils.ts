@@ -1,19 +1,20 @@
+import { clsx } from 'clsx';
+import { format } from 'date-fns';
+import { toast } from 'sonner';
+import { twMerge } from 'tailwind-merge';
 
-import { clsx } from "clsx";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: any[]) {
+export function cn(...inputs: unknown[]) {
   return twMerge(clsx(inputs));
 }
 
 // Replace White Background
 export const replaceWhiteBackground = (html: string) => {
-  if (!html) return "";
+  if (!html) return '';
 
   return html.replace(/style="([^"]*)"/g, (match, styleString: string) => {
-    const styleProperties = styleString.split(';').filter((prop: string) => prop.trim() !== '');
+    const styleProperties = styleString
+      .split(';')
+      .filter((prop: string) => prop.trim() !== '');
 
     const filteredProperties = styleProperties.filter((prop: string) => {
       const i = prop.indexOf(':');
@@ -49,34 +50,34 @@ export const replaceWhiteBackground = (html: string) => {
 
 // Success Toast
 export const SuccessToast = (msg: string) => {
-  toast.success(msg)
-}
+  toast.success(msg);
+};
 
-// Error Toast 
+// Error Toast
 export const ErrorToast = (msg: string) => {
-  toast.error(msg)
-}
+  toast.error(msg);
+};
 
 // Warning Toast
 export const WarningToast = (msg: string) => {
-  toast.warning(msg)
-}
+  toast.warning(msg);
+};
 
 // Info Toast
 export const InfoToast = (msg: string) => {
-  toast.info(msg)
-}
+  toast.info(msg);
+};
 
 // Get Initials
 export const getInitials = (name: string) => {
-  if (!name) return "NA";
+  if (!name) return 'NA';
   const parts = name.trim().split(/\s+/);
-  const first = parts[0]?.[0] || "N";
-  const second = parts[1]?.[0] || parts[0]?.[1] || "A";
+  const first = parts[0]?.[0] || 'N';
+  const second = parts[1]?.[0] || parts[0]?.[1] || 'A';
   return (first + second).toUpperCase();
 };
 
-// Format Date 
+// Format Date
 export const formatDate = (dateString: string) => {
   if (!dateString) return 'N/A';
   return format(new Date(dateString), 'dd MMM yyyy');
@@ -90,13 +91,13 @@ export const formatDate = (dateString: string) => {
 
 // Time Ago
 export const timeAgo = (createdAt: string) => {
-  if (!createdAt) return ""
-  const s = Math.floor((Date.now() - new Date(createdAt).getTime()) / 1000)
-  if (s < 60) return "Just now"
-  const m = Math.floor(s / 60)
-  if (m < 60) return `${m}m ago`
-  const h = Math.floor(m / 60)
-  if (h < 24) return `${h}h ago`
-  const d = Math.floor(h / 24)
-  return `${d}d ago`
-}
+  if (!createdAt) return '';
+  const s = Math.floor((Date.now() - new Date(createdAt).getTime()) / 1000);
+  if (s < 60) return 'Just now';
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
+};
