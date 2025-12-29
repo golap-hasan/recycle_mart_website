@@ -1,7 +1,9 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Menu,
   MapPin,
@@ -13,7 +15,7 @@ import {
   Search,
   Heart,
   MenuIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 import {
   Sheet,
@@ -21,44 +23,47 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useUser } from '@/context/UserContext';
 
 const NavMiddle = () => {
   const toSlug = (value: string) =>
     value
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)+/g, "");
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+
+  const { user } = useUser();
 
   const categories = [
     {
-      title: "Mobiles",
-      items: ["Smartphones", "Android Tablets", "Wearables"],
+      title: 'Mobiles',
+      items: ['Smartphones', 'Android Tablets', 'Wearables'],
     },
     {
-      title: "Electronics and Gadgets",
-      items: ["Laptops", "Headphones", "Smart Home"],
+      title: 'Electronics and Gadgets',
+      items: ['Laptops', 'Headphones', 'Smart Home'],
     },
     {
-      title: "Vehicles",
-      items: ["Cars", "Motorcycles", "Parts & Accessories"],
+      title: 'Vehicles',
+      items: ['Cars', 'Motorcycles', 'Parts & Accessories'],
     },
     {
-      title: "Home Living",
-      items: ["Furniture", "Kitchen & Dining", "Decor"],
+      title: 'Home Living',
+      items: ['Furniture', 'Kitchen & Dining', 'Decor'],
     },
     {
-      title: "Property",
-      items: ["Apartments", "Commercial Space", "Land"],
+      title: 'Property',
+      items: ['Apartments', 'Commercial Space', 'Land'],
     },
     {
-      title: "Others",
+      title: 'Others',
       items: [
-        "Air Conditioners",
-        "Refrigerators",
-        "Washing Machines",
-        "Microwaves",
+        'Air Conditioners',
+        'Refrigerators',
+        'Washing Machines',
+        'Microwaves',
       ],
     },
   ];
@@ -107,20 +112,20 @@ const NavMiddle = () => {
         {/* Desktop Utility Links */}
         <div className="hidden lg:flex items-center gap-3 text-sm">
           <Link
-            href="/chat"
+            href={user ? '/chat' : '/auth/login'}
             className="flex items-center gap-2 rounded-full px-4 py-2 transition hover:bg-white/15"
           >
             <MessageCircle className="h-4 w-4" />
             <span>Inbox</span>
           </Link>
           <Link
-            href="/profile"
+            href={user ? '/profile' : '/auth/login'}
             className="flex items-center gap-2 rounded-full px-4 py-2 transition hover:bg-white/15"
           >
             <User className="h-4 w-4" />
             <span>Dashboard</span>
           </Link>
-          <Link href="/ads/create">
+          <Link href={user ? '/ads/create' : '/auth/login'}>
             <Button
               size="sm"
               className="flex items-center gap-2 rounded-full bg-linear-to-r from-pink-400 to-orange-500 px-5 py-4.5 text-sm font-semibold text-white hover:from-pink-300 hover:to-orange-400"
@@ -153,7 +158,7 @@ const NavMiddle = () => {
               </SheetHeader>
               <ScrollArea className="h-full px-6 py-4">
                 <nav className="space-y-4 text-sm">
-                  {categories.map((category) => (
+                  {categories.map(category => (
                     <div key={category.title} className="space-y-2">
                       <Link
                         href={`/ads?category=${toSlug(category.title)}`}
@@ -162,7 +167,7 @@ const NavMiddle = () => {
                         {category.title}
                       </Link>
                       <div className="flex flex-wrap gap-2 text-white/80">
-                        {category.items.map((item) => (
+                        {category.items.map(item => (
                           <Link
                             key={item}
                             href={`/ads?category=${toSlug(item)}`}

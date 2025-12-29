@@ -1,8 +1,8 @@
-import Link from "next/link";
-import NoData from "@/components/common/no-data/NoData";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Ghost, ArrowLeft, ShoppingBag } from "lucide-react";
+import Link from 'next/link';
+import NoData from '@/components/common/no-data/NoData';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Ghost, ArrowLeft, ShoppingBag } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
             <div className="mx-auto mb-4 grid size-16 place-items-center rounded-full bg-primary/10 text-primary">
               <Ghost className="size-8" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight"> 
+            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
               404
               <span className="sr-only"> - </span>
               <span className="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent ml-2">
@@ -31,10 +31,10 @@ export default function NotFound() {
                   Go Home
                 </Button>
               </Link>
-              <Link href="/shop">
+              <Link href="/ads">
                 <Button variant="outline">
                   <ShoppingBag className="mr-1.5" />
-                  Browse Shop
+                  Browse Ads
                 </Button>
               </Link>
             </div>
