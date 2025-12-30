@@ -1,0 +1,61 @@
+{
+    "success": true,
+    "message": "Plans retrieved successfully!",
+    "data": [
+        {
+            "_id": "6953b88228e593ee45dcef01",
+            "name": "Free",
+            "price": 0,
+            "currency": "BDT",
+            "durationUnit": "MONTH",
+            "durationValue": 1,
+            "adsLimit": 5,
+            "features": [
+                "5 Active ads listing",
+                "Standard visibility",
+                "Community support",
+                "Basic analytics"
+            ],
+            "isActive": true,
+            "createdAt": "2025-12-30T11:33:22.588Z",
+            "updatedAt": "2025-12-30T11:33:22.588Z"
+        },
+        {
+            "_id": "6953b88d28e593ee45dcef04",
+            "name": "Basic",
+            "price": 100,
+            "currency": "BDT",
+            "durationUnit": "MONTH",
+            "durationValue": 1,
+            "adsLimit": 10,
+            "features": [
+                "10 Active ads listing",
+                "Enhanced visibility",
+                "Priority search results",
+                "7-day featured boost (1x)"
+            ],
+            "isActive": true,
+            "createdAt": "2025-12-30T11:33:33.461Z",
+            "updatedAt": "2025-12-30T11:33:33.461Z"
+        },
+        {
+            "_id": "6953b84828e593ee45dceefe",
+            "name": "Premium",
+            "price": 200,
+            "currency": "BDT",
+            "durationUnit": "MONTH",
+            "durationValue": 1,
+            "adsLimit": 15,
+            "features": [
+                "15 Active ads listing",
+                "Maximum visibility",
+                "Verified badge on profile",
+                "15-day featured boost (3x)",
+                "Dedicated WhatsApp support"
+            ],
+            "isActive": true,
+            "createdAt": "2025-12-30T11:32:24.941Z",
+            "updatedAt": "2025-12-30T11:32:24.941Z"
+        }
+    ]
+}
