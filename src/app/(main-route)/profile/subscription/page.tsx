@@ -21,13 +21,13 @@ const getPlanConfig = (name: string) => {
         icon: <Zap className="h-6 w-6 text-blue-500" />, 
         color: "blue", 
         description: "Ideal for regular sellers with more items.",
-        popular: true 
       };
     case 'premium':
       return { 
         icon: <Crown className="h-6 w-6 text-amber-500" />, 
         color: "amber", 
-        description: "Best for power users and small businesses." 
+        description: "Best for power users and small businesses.",
+        popular: true 
       };
     default:
       return { 
@@ -60,7 +60,10 @@ export default async function SubscriptionPage() {
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {plans.map((plan: any) => {
           const config = getPlanConfig(plan.name);
-          const isCurrent = currentSub?.plan?._id === plan._id;
+          // Default to Free plan if no subscription found
+          const isCurrent = currentSub 
+            ? currentSub.plan?._id === plan._id 
+            : plan.name.toLowerCase() === 'free';
 
           return (
             <Card 
@@ -80,7 +83,7 @@ export default async function SubscriptionPage() {
                   </div>
                   {isCurrent && (
                     <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                      Active Plan
+                      {currentSub ? "Active Plan" : "Auto Activated"}
                     </Badge>
                   )}
                 </div>
@@ -114,13 +117,18 @@ export default async function SubscriptionPage() {
               </CardContent>
 
               <CardFooter className="pt-0">
-                <Button 
-                  variant={isCurrent ? "outline" : "default"} 
-                  className={`w-full rounded-full h-11 transition-all ${!isCurrent && 'shadow-sm shadow-primary/20'}`}
-                  disabled={isCurrent}
-                >
-                  {isCurrent ? "Current Plan" : `Upgrade to ${plan.name}`}
-                </Button>
+                {!(plan.name.toLowerCase() === 'free' && currentSub && !isCurrent) && (
+                  <Button 
+                    variant={isCurrent ? "outline" : "default"} 
+                    className={`w-full rounded-full h-11 transition-all ${!isCurrent && 'shadow-sm shadow-primary/20'}`}
+                    disabled={isCurrent}
+                  >
+                    {isCurrent 
+                      ? "Current Plan" 
+                      : `Upgrade to ${plan.name}`
+                    }
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           );

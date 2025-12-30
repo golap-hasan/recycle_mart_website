@@ -127,9 +127,6 @@ export default function MyAdsPage() {
             <TabsTrigger value="drafts">Drafts</TabsTrigger>
             <TabsTrigger value="archived">Archived</TabsTrigger>
           </TabsList>
-          <Badge variant="outline" className="w-fit rounded-full border-primary/40 text-primary">
-            2 ads expiring in 48h
-          </Badge>
         </div>
 
         <TabsContent value="active" className="space-y-4">
