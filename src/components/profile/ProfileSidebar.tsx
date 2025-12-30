@@ -13,6 +13,7 @@ import {
   UserCircle,
   CreditCard,
   Menu,
+  ShieldCheck,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -26,14 +27,17 @@ import {
   SheetClose,
   SheetTitle,
 } from "@/components/ui/sheet";
+
 import React from "react";
 
-const userSnapshot = {
-  name: "Rafi Khan",
-  phone: "+880 1711-000000",
-  avatar: "https://images.pexels.com/photos/3775539/pexels-photo-3775539.jpeg",
-  membership: "Member since 2023",
-  verified: true,
+type UserProfile = {
+  _id: string;
+  name: string;
+  phone: string;
+  image?: string;
+  email: string;
+  isVerifiedByOTP: boolean;
+  role: string;
 };
 
 type NavItem = {
@@ -72,12 +76,22 @@ const navSections: NavSection[] = [
 ];
 
 type SidebarContentProps = {
+  user: UserProfile | null;
   className?: string;
   onNavigate?: () => void;
-  LinkWrapper?: React.ComponentType<{ children: React.ReactNode; asChild?: boolean }>;
+  LinkWrapper?: React.ComponentType<{
+    children: React.ReactNode;
+    asChild?: boolean;
+    onClick?: () => void;
+  }>;
 };
 
-function SidebarContent({ className, onNavigate, LinkWrapper }: SidebarContentProps) {
+function SidebarContent({
+  user,
+  className,
+  onNavigate,
+  LinkWrapper,
+}: SidebarContentProps) {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -91,20 +105,32 @@ function SidebarContent({ className, onNavigate, LinkWrapper }: SidebarContentPr
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       <div className="flex items-center gap-3">
-        <Avatar className="h-14 w-14">
-          <AvatarImage src={userSnapshot.avatar} alt={userSnapshot.name} />
-          <AvatarFallback>
-            <UserCircle className="h-7 w-7" />
+        <Avatar className="h-14 w-14 border border-border/50 shadow-sm">
+          <AvatarImage src={user?.image} alt={user?.name} className="object-cover" />
+          <AvatarFallback className="bg-primary/5 text-primary">
+            <UserCircle className="h-8 w-8" />
           </AvatarFallback>
         </Avatar>
-        <div>
-          <h2 className="text-base font-semibold leading-tight">{userSnapshot.name}</h2>
-          <p className="text-xs text-muted-foreground">{userSnapshot.phone}</p>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-base font-bold leading-tight truncate">
+            {user?.name || "User Name"}
+          </h2>
+          <p className="text-xs text-muted-foreground font-medium">
+            {user?.phone || user?.email || "No contact info"}
+          </p>
           <div className="mt-2 flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs font-medium">
-              {userSnapshot.membership}
+            <Badge
+              variant="secondary"
+              className="text-[10px] h-5 font-semibold bg-primary/10 text-primary border-none"
+            >
+              {user?.role || "Member"}
             </Badge>
-            {userSnapshot.verified ? <Badge className="text-xs">Verified</Badge> : null}
+            {user?.isVerifiedByOTP ? (
+              <Badge className="text-[10px] h-5 gap-1 bg-emerald-500 hover:bg-emerald-600 border-none">
+                <ShieldCheck className="h-3 w-3" />
+                Verified
+              </Badge>
+            ) : null}
           </div>
         </div>
       </div>
@@ -177,38 +203,40 @@ function SidebarContent({ className, onNavigate, LinkWrapper }: SidebarContentPr
           </div>
         ))}
       </nav>
-
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-sm text-emerald-900 dark:border-emerald-400/50 dark:bg-emerald-500/10 dark:text-emerald-100">
-        <p className="font-semibold">Boost your ad visibility</p>
-        <p className="mt-1 text-xs text-emerald-900/80 dark:text-emerald-100/80">
-          Featured upgrades help your listings appear ahead of others. Try promoting your best-selling items.
-        </p>
-      </div>
     </div>
   );
 }
 
 type ProfileSidebarProps = {
+  user: UserProfile | null;
   variant?: "desktop" | "mobile";
   className?: string;
   onNavigate?: () => void;
 };
 
-export default function ProfileSidebar({ variant = "desktop", className, onNavigate }: ProfileSidebarProps) {
+export default function ProfileSidebar({
+  user,
+  variant = "desktop",
+  className,
+  onNavigate,
+}: ProfileSidebarProps) {
   if (variant === "mobile") {
     return (
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" className={cn("w-full justify-between h-auto", className)}>
+          <Button
+            variant="ghost"
+            className={cn("w-full justify-between h-auto py-1 px-1", className)}
+          >
             <div className="flex items-center gap-3 text-left">
               <Avatar className="h-10 w-10 border border-border">
-                <AvatarImage src={userSnapshot.avatar} alt={userSnapshot.name} />
+                <AvatarImage src={user?.image} alt={user?.name} className="object-cover" />
                 <AvatarFallback>
                   <UserCircle className="h-5 w-5" />
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <p className="font-semibold leading-none">{userSnapshot.name}</p>
+              <div className="min-w-0">
+                <p className="font-semibold leading-none truncate">{user?.name}</p>
                 <p className="text-xs text-muted-foreground mt-1">Manage Account</p>
               </div>
             </div>
@@ -217,7 +245,7 @@ export default function ProfileSidebar({ variant = "desktop", className, onNavig
         </SheetTrigger>
         <SheetTitle className="sr-only">Manage Account</SheetTitle>
         <SheetContent side="left" className="w-[320px] p-5 overflow-y-auto">
-          <SidebarContent onNavigate={onNavigate} LinkWrapper={SheetClose} />
+          <SidebarContent user={user} onNavigate={onNavigate} LinkWrapper={SheetClose} />
         </SheetContent>
       </Sheet>
     );
@@ -226,11 +254,11 @@ export default function ProfileSidebar({ variant = "desktop", className, onNavig
   return (
     <aside
       className={cn(
-        "hidden rounded-xl border bg-card/95 p-5 shadow-sm lg:flex flex-col gap-4",
+        "hidden rounded-xl border bg-card/95 p-5 shadow-sm lg:flex flex-col gap-4 sticky top-24",
         className
       )}
     >
-      <SidebarContent onNavigate={onNavigate} />
+      <SidebarContent user={user} onNavigate={onNavigate} />
     </aside>
   );
 }

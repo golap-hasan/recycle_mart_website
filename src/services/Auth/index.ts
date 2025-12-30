@@ -269,7 +269,7 @@ export const fetchMyProfile = async (): Promise<any> => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_API}/user/profile`,
-      {
+      { 
         method: 'GET',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -333,6 +333,7 @@ export const deactiveAccount = async (userData: FieldValues): Promise<any> => {
     return Error(error);
   }
 };
+
 // updateUserData
 export const updateUserData = async (userData: FieldValues): Promise<any> => {
   const accessToken = await getValidAccessTokenForServerActions();
