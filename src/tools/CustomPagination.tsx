@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 import {
   Pagination,
   PaginationContent,
@@ -11,90 +11,76 @@ import {
 
 type PaginationIdentifier = number | "...";
 
-type UsePaginationOptions = {
-  totalPages: number;
-  currentPage: number;
-  siblingCount?: number;
-};
+const getPaginationRange = (totalPages: number, currentPage: number, siblingCount = 1): PaginationIdentifier[] => {
+  const totalPageNumbers = siblingCount + 5;
 
-const usePagination = ({
-  totalPages,
-  currentPage,
-  siblingCount = 1,
-}: UsePaginationOptions): PaginationIdentifier[] => {
-  const paginationRange = React.useMemo<PaginationIdentifier[]>(() => {
-    const totalPageNumbers = siblingCount + 5;
+  if (totalPageNumbers >= totalPages) {
+    return [...Array(totalPages)].map((_, idx) => idx + 1);
+  }
 
-    if (totalPageNumbers >= totalPages) {
-      return [...Array(totalPages)].map((_, idx) => idx + 1);
+  const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+  const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+  const shouldShowLeftDots = leftSiblingIndex > 2;
+  const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
+
+  const firstPageIndex = 1;
+  const lastPageIndex = totalPages;
+
+  if (!shouldShowLeftDots && shouldShowRightDots) {
+    const leftItemCount = 3 + 2 * siblingCount;
+    const leftRange = [...Array(leftItemCount)].map((_, i) => i + 1);
+    return [...leftRange, "...", totalPages];
+  }
+
+  if (shouldShowLeftDots && !shouldShowRightDots) {
+    const rightItemCount = 3 + 2 * siblingCount;
+    const rightRange = [...Array(rightItemCount)].map(
+      (_, i) => totalPages - rightItemCount + i + 1
+    );
+    return [firstPageIndex, "...", ...rightRange];
+  }
+
+  if (shouldShowLeftDots && shouldShowRightDots) {
+    const middleRange = [];
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+      middleRange.push(i);
     }
-
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
-
-    const firstPageIndex = 1;
-    const lastPageIndex = totalPages;
-
-    if (!shouldShowLeftDots && shouldShowRightDots) {
-      const leftItemCount = 3 + 2 * siblingCount;
-      const leftRange = [...Array(leftItemCount)].map((_, i) => i + 1);
-      return [...leftRange, "...", totalPages];
-    }
-
-    if (shouldShowLeftDots && !shouldShowRightDots) {
-      const rightItemCount = 3 + 2 * siblingCount;
-      const rightRange = [...Array(rightItemCount)].map(
-        (_, i) => totalPages - rightItemCount + i + 1
-      );
-      return [firstPageIndex, "...", ...rightRange];
-    }
-
-    if (shouldShowLeftDots && shouldShowRightDots) {
-      const middleRange = [];
-      for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-        middleRange.push(i);
-      }
-      return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
-    }
-    return [];
-  }, [totalPages, currentPage, siblingCount]);
-
-  return paginationRange || [];
+    return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
+  }
+  return [];
 };
 
 type CustomPaginationProps = {
   currentPage: number;
   totalPages: number;
-  setCurrentPage: (page: number) => void;
+  searchParams?: Record<string, string | string[] | undefined>;
 };
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({
   currentPage,
   totalPages,
-  setCurrentPage,
+  searchParams = {},
 }) => {
-  const paginationRange = usePagination({ currentPage, totalPages });
+  const paginationRange = getPaginationRange(totalPages, currentPage);
 
   if (currentPage === 0 || paginationRange.length < 2) {
     return null;
   }
+
+  const createPageUrl = (page: number) => {
+    const params = new URLSearchParams(searchParams as Record<string, string>);
+    params.set("page", page.toString());
+    return `?${params.toString()}`;
+  };
 
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              setCurrentPage(Math.max(currentPage - 1, 1));
-            }}
-            className={
-              currentPage === 1 ? "pointer-events-none opacity-50" : ""
-            }
+            href={currentPage > 1 ? createPageUrl(currentPage - 1) : "#"}
+            className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
         {paginationRange.map((pageNumber, index) => {
@@ -109,11 +95,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           return (
             <PaginationItem key={pageNumber}>
               <PaginationLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(pageNumber);
-                }}
+                href={createPageUrl(pageNumber as number)}
                 isActive={currentPage === pageNumber}
               >
                 {pageNumber}
@@ -123,14 +105,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
         })}
         <PaginationItem>
           <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              setCurrentPage(Math.min(currentPage + 1, totalPages));
-            }}
-            className={
-              currentPage === totalPages ? "pointer-events-none opacity-50" : ""
-            }
+            href={currentPage < totalPages ? createPageUrl(currentPage + 1) : "#"}
+            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
       </PaginationContent>

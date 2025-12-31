@@ -1,4 +1,5 @@
-import { Check, Crown, Zap, Ticket, Loader2 } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Check, Crown, Zap, Ticket } from "lucide-react";
 import { format } from "date-fns";
 
 import { ProfilePageHeader } from "@/components/profile/ProfilePageHeader";
@@ -141,11 +142,11 @@ export default async function SubscriptionPage() {
           <CardTitle className="text-base font-semibold">Billing history</CardTitle>
           <CardDescription>Track your payments and download invoices.</CardDescription>
         </CardHeader>
-        <CardContent className="overflow-hidden rounded-xl border border-border/40 p-0">
+        <CardContent className="overflow-hidden border border-border/40 p-0">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="w-[150px]">Invoice</TableHead>
+                <TableHead className="w-[180px]">Invoice</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Amount</TableHead>
@@ -156,9 +157,9 @@ export default async function SubscriptionPage() {
               {invoices.length > 0 ? (
                 invoices.map((bill: any) => (
                   <TableRow key={bill._id} className="hover:bg-muted/30">
-                    <TableCell className="font-medium text-foreground">{bill.transactionId || bill._id.substring(0, 10)}</TableCell>
+                    <TableCell className="font-medium text-foreground whitespace-nowrap">{bill.invoiceNo || bill._id.substring(0, 10)}</TableCell>
                     <TableCell className="text-muted-foreground">
-                      {bill.createdAt ? format(new Date(bill.createdAt), "dd MMM yyyy") : "N/A"}
+                      {bill.date ? format(new Date(bill.date), "dd MMM yyyy") : "N/A"}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="font-normal">{bill.planName || "Subscription"}</Badge>
