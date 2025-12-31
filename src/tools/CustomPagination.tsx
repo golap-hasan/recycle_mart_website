@@ -64,7 +64,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
 }) => {
   const paginationRange = getPaginationRange(totalPages, currentPage);
 
-  if (currentPage === 0 || paginationRange.length < 2) {
+  if (currentPage === 0 || paginationRange.length === 0) {
     return null;
   }
 
