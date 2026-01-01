@@ -20,12 +20,14 @@ const breadcrumbs = [
 const AllAdsPage = async (props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
+  // throw new Error("Testing our cool error page!");
   const searchParams = await props.searchParams;
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
   
   // Parallel fetching
   const [categoriesRes, adsRes] = await Promise.all([
     fetchAllCategories(),
-    fetchAllAds({ ...searchParams, limit: "1" }),
+    fetchAllAds({ ...searchParams, 'limit':'10' }),
   ]);
 
   const categories = categoriesRes?.success ? categoriesRes.data : [];

@@ -1,3 +1,17 @@
+import { Category } from "./category.type";
+
+export interface User {
+  _id: string;
+  name: string;
+  phone: string;
+  image: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Ad {
   id: string;
   title: string;
@@ -7,6 +21,23 @@ export interface Ad {
   coverImage: string;
   isFeatured: boolean;
   isUrgent: boolean;
+}
+
+export interface AdDetail extends Omit<Ad, 'id' | 'postedAt' | 'coverImage'> {
+  _id: string;
+  user: User;
+  categoryId: Category;
+  condition: "new" | "used";
+  description: string;
+  negotiable: boolean;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  images: string[];
+  status: string;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AdMeta {
@@ -20,5 +51,12 @@ export interface AdResponse {
   success: boolean;
   message: string;
   meta?: AdMeta;
-  data: Ad | Ad[];
+  data: AdDetail;
+}
+
+export interface AdsResponse {
+  success: boolean;
+  message: string;
+  meta?: AdMeta;
+  data: Ad[];
 }

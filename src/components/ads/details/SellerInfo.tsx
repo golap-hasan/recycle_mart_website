@@ -1,75 +1,88 @@
 "use client";
 
 import { Shield, MapPin, Calendar } from "lucide-react";
-
-type Seller = {
-  id: string;
-  name: string;
-  avatar: string;
-  memberSince: string;
-  rating: number;
-  totalAds: number;
-  verified: boolean;
-  phone: string;
-  location: string;
-};
+import Image from "next/image";
+import { User } from "@/types/ad.type";
 
 type SellerInfoProps = {
-  seller: Seller;
+  seller: User;
+  location?: string;
 };
 
-export default function SellerInfo({ seller }: SellerInfoProps) {
+export default function SellerInfo({ seller, location }: SellerInfoProps) {
+  const initials = seller.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="rounded-xl border border-border/40 bg-card">
-      <div className="p-6 pb-4">
+      <div className="p-6 pb-4 border-b border-border/40">
         <h3 className="text-lg font-semibold">Seller Information</h3>
       </div>
-      <div className="px-6 pb-6 space-y-4">
+      <div className="p-6 space-y-4">
         {/* Seller Profile */}
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-            <span className="text-sm font-semibold">
-              {seller.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-            </span>
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-muted border border-border/40">
+            {seller.image ? (
+              <Image
+                src={seller.image}
+                alt={seller.name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary font-bold">
+                {initials}
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold truncate">{seller.name}</h3>
-              {seller.verified && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <Shield className="w-3 h-3 mr-1" />
-                  Verified
-                </span>
+              <h3 className="font-semibold truncate text-foreground text-lg">
+                {seller.name}
+              </h3>
+              {seller.role === "VENDOR" && (
+                <Shield className="w-4 h-4 text-primary shrink-0" />
               )}
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <span>{seller.totalAds} ads</span>
-            </div>
+            <p className="text-sm text-muted-foreground capitalize">
+              {seller.role.toLowerCase()}
+            </p>
           </div>
         </div>
 
         {/* Seller Details */}
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2.5 pt-2 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="w-4 h-4" />
-            <span>Member since {seller.memberSince}</span>
+            <span>Member since {getMemberSince(seller.createdAt)}</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="w-4 h-4" />
-            <span>{seller.location}</span>
-          </div>
+          {location && (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm">
+              <MapPin className="w-4 h-4" />
+              <span className="truncate">{location}</span>
+            </div>
+          )}
         </div>
 
-        {/* Trust Indicators */}
-        <div className="flex flex-wrap gap-2 pt-2">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">
-            Trusted Seller
-          </span>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">
-            Quick Response
-          </span>
+        {/* Action Button (Optional, can be added if needed) */}
+        <div className="pt-2">
+           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/5 text-primary border border-primary/20">
+             Verified User
+           </span>
         </div>
       </div>
     </div>
   );
+}
+
+function getMemberSince(dateString: string) {
+  const date = new Date(dateString);
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  return `${months[date.getMonth()]} ${date.getFullYear()}`;
 }

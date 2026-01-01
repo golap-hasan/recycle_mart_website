@@ -1,32 +1,54 @@
 {
     "success": true,
-    "message": "Ads retrieved successfully!",
-    "meta": {
-        "page": 1,
-        "limit": 20,
-        "total": 2,
-        "totalPage": 1
-    },
-    "data": [
-        {
-            "id": "69569d2fb4dbe96259c31855",
-            "title": "Used Phone for Sale",
-            "price": 25000,
-            "location": "Dhaka",
-            "postedAt": "2026-01-01T16:13:35.247Z",
-            "coverImage": "https://res.cloudinary.com/dweesppci/image/upload/v1767284013/recycle-mart/images/it88yodrh5i-1767284012498-images-screenshot-2025-12-31-192956.png",
-            "isFeatured": false,
-            "isUrgent": false
+    "message": "Ad retrieved successfully!",
+    "data": {
+        "_id": "69569d2fb4dbe96259c31855",
+        "user": {
+            "_id": "694a688d4677a80ac60d4d61",
+            "name": "1st Vendor",
+            "phone": "01787654321",
+            "image": "https://res.cloudinary.com/dweesppci/image/upload/v1767274270/recycle-mart/images/uz2va784co-1767274269576-user-screenshot-2025-12-30-130243.png",
+            "email": "jane.vendor@example.com",
+            "otp": "320245",
+            "otpExpiry": "2025-12-23T10:16:26.161Z",
+            "isVerifiedByOTP": true,
+            "role": "VENDOR",
+            "isActive": true,
+            "isDeleted": false,
+            "createdAt": "2025-12-23T10:01:49.778Z",
+            "updatedAt": "2026-01-01T13:35:14.282Z"
         },
-        {
-            "id": "69552a3d44976287fe5f586e",
-            "title": "Used Laptop for Sale",
-            "price": 25000,
-            "location": "Dhaka",
-            "postedAt": "2025-12-31T13:50:53.374Z",
-            "coverImage": "https://res.cloudinary.com/dweesppci/image/upload/v1767189050/recycle-mart/images/14zdzq2omi2-1767189049900-images-screenshot-2025-12-31-192956.png",
-            "isFeatured": false,
-            "isUrgent": false
-        }
-    ]
+        "categoryId": {
+            "_id": "695680f8a2fe85d157f6dd03",
+            "name": "Mobiles",
+            "slug": "mobiles",
+            "icon": "https://res.cloudinary.com/dweesppci/image/upload/v1767276791/recycle-mart/images/7ui6mtkkjon-1767276790961-icon-smartphone-call.png",
+            "isActive": true,
+            "order": 1,
+            "createdAt": "2026-01-01T14:13:12.652Z",
+            "updatedAt": "2026-01-01T14:13:12.652Z"
+        },
+        "condition": "used",
+        "title": "Used Phone for Sale",
+        "description": "This Dell Inspiron 15 laptop is in very good used condition and has been carefully maintained. It is suitable for office work, online classes, freelancing, browsing, and light development tasks. The laptop runs smoothly without any major issues and has never been repaired. Battery backup is decent for daily use. Ideal for students or professionals looking for a reliable laptop at an affordable price. Serious buyers only.",
+        "price": 25000,
+        "negotiable": true,
+        "location": "Dhaka",
+        "contactName": "John Doe",
+        "contactPhone": "01712345678",
+        "contactEmail": "john@example.com",
+        "images": [
+            "https://res.cloudinary.com/dweesppci/image/upload/v1767284013/recycle-mart/images/it88yodrh5i-1767284012498-images-screenshot-2025-12-31-192956.png",
+            "https://res.cloudinary.com/dweesppci/image/upload/v1767284013/recycle-mart/images/qwz98sttoos-1767284013591-images-screenshot-2025-12-31-193030.png",
+            "https://res.cloudinary.com/dweesppci/image/upload/v1767284014/recycle-mart/images/pq9i97z6klh-1767284014110-images-screenshot-2025-12-31-192956.png"
+        ],
+        "status": "ACTIVE",
+        "rejectReason": null,
+        "rejectNote": null,
+        "isFeatured": false,
+        "isUrgent": false,
+        "views": 0,
+        "createdAt": "2026-01-01T16:13:35.247Z",
+        "updatedAt": "2026-01-01T16:24:22.580Z"
+    }
 }

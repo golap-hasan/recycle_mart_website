@@ -84,7 +84,7 @@ export default function RelatedAds({ currentAdId, category }: RelatedAdsProps) {
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
         {relatedAds.map((ad) => (
           <div key={ad.id} className="overflow-hidden hover:shadow-lg transition-shadow rounded-xl border border-border/40 bg-card">
-            <Link href={`/ads/apple-iphone-14`}>
+            <Link href={`/ads/${ad.id}`}>
               <div className="relative aspect-4/3 overflow-hidden">
                 <Image
                   src={ad.imageUrl}

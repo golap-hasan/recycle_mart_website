@@ -3,13 +3,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidAccessTokenForServerActions } from "@/lib/getValidAccessToken";
 import { revalidatePath } from "next/cache";
-import { AdResponse } from "@/types/ad.type";
+import { AdResponse, AdsResponse } from "@/types/ad.type";
 
 /**
  * 1. Get All Ads
  * Endpoint: GET /ad
  */
-export const fetchAllAds = async (query: Record<string, any> = {}): Promise<AdResponse> => {
+export const fetchAllAds = async (query: Record<string, any> = {}): Promise<AdsResponse> => {
   const params = new URLSearchParams(query);
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad?${params.toString()}`, {
@@ -38,7 +38,7 @@ export const fetchAdById = async (adId: string): Promise<AdResponse> => {
     const result = await res.json();
     return result;
   } catch (error: any) {
-    return { success: false, data: [] as any, message: error.message || "Failed to fetch ad details" };
+    return { success: false, data: null as any, message: error.message || "Failed to fetch ad details" };
   }
 };
 
@@ -46,7 +46,7 @@ export const fetchAdById = async (adId: string): Promise<AdResponse> => {
  * 2. Get My Ads
  * Endpoint: GET /ad/my
  */
-export const fetchMyAds = async (query: Record<string, any> = {}): Promise<AdResponse> => {
+export const fetchMyAds = async (query: Record<string, any> = {}): Promise<AdsResponse> => {
   const accessToken = await getValidAccessTokenForServerActions();
   const params = new URLSearchParams(query);
 
