@@ -5,16 +5,7 @@ import { fetchMyAds } from "@/services/ads";
 import { PackageOpen } from "lucide-react";
 import { timeAgo } from "@/lib/utils";
 
-interface AdItem {
-  _id: string;
-  title: string;
-  price: string | number;
-  location: string;
-  createdAt: string;
-  images: string[];
-  isFeatured: boolean;
-  isUrgent: boolean;
-}
+import { Ad } from "@/types/ad.type";
 
 export default async function MyAdsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -25,7 +16,7 @@ export default async function MyAdsPage(props: {
 
   const response = await fetchMyAds({ page, limit });
   
-  const ads = response?.success ? (response.data as AdItem[]) || [] : [];
+  const ads = response?.success ? (response.data as Ad[]) || [] : [];
   const meta = response?.meta || { page, limit, total: 0, totalPage: 0 };
 
   return (
@@ -49,7 +40,7 @@ export default async function MyAdsPage(props: {
         ) : (
           <div className="space-y-8">
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {ads.map((ad: AdItem) => (
+              {ads.map((ad: Ad) => (
                 <ListingCard
                   key={ad._id}
                   id={ad._id}

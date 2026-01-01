@@ -1,14 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidAccessTokenForServerActions } from "@/lib/getValidAccessToken";
 import { revalidatePath } from "next/cache";
+import { AdResponse } from "@/types/ad.type";
 
 /**
  * 1. Get All Ads
  * Endpoint: GET /ad
  */
-export const fetchAllAds = async (query: Record<string, any> = {}): Promise<any> => {
+export const fetchAllAds = async (query: Record<string, any> = {}): Promise<AdResponse> => {
   const params = new URLSearchParams(query);
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad?${params.toString()}`, {
@@ -19,7 +20,7 @@ export const fetchAllAds = async (query: Record<string, any> = {}): Promise<any>
     const result = await res.json();
     return result;
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to fetch ads" };
+    return { success: false, data: [], message: error.message || "Failed to fetch ads" };
   }
 };
 
@@ -27,7 +28,7 @@ export const fetchAllAds = async (query: Record<string, any> = {}): Promise<any>
  * 1.1 Get Ad By ID
  * Endpoint: GET /ad/{adId}
  */
-export const fetchAdById = async (adId: string): Promise<any> => {
+export const fetchAdById = async (adId: string): Promise<AdResponse> => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad/${adId}`, {
       method: "GET",
@@ -37,7 +38,7 @@ export const fetchAdById = async (adId: string): Promise<any> => {
     const result = await res.json();
     return result;
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to fetch ad details" };
+    return { success: false, data: [] as any, message: error.message || "Failed to fetch ad details" };
   }
 };
 
@@ -45,7 +46,7 @@ export const fetchAdById = async (adId: string): Promise<any> => {
  * 2. Get My Ads
  * Endpoint: GET /ad/my
  */
-export const fetchMyAds = async (query: Record<string, any> = {}): Promise<any> => {
+export const fetchMyAds = async (query: Record<string, any> = {}): Promise<AdResponse> => {
   const accessToken = await getValidAccessTokenForServerActions();
   const params = new URLSearchParams(query);
 
@@ -61,7 +62,7 @@ export const fetchMyAds = async (query: Record<string, any> = {}): Promise<any> 
     const result = await res.json();
     return result;
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to fetch my ads" };
+    return { success: false, data: [], message: error.message || "Failed to fetch my ads" };
   }
 };
 

@@ -1,27 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { X, SlidersHorizontal } from "lucide-react";
-import { ScrollArea } from "../ui/scroll-area";
-
-export type FilterOption = {
-  label: string;
-  value: string;
-};
-
-export type FilterGroup = {
-  id: string;
-  title: string;
-  options?: FilterOption[];
-  type: "checkbox" | "slider";
-  sliderRange?: [number, number];
-  sliderStep?: number;
-};
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Category } from "@/types/category.type";
+import { useSmartFilter } from "@/hooks/useSmartFilter";
 
 export const sortOptions = [
   { value: "newest", label: "Date: Newest first" },
@@ -37,207 +25,158 @@ export const locationOptions = [
   { value: "rajshahi", label: "Rajshahi" },
 ];
 
-const defaultFilters: FilterGroup[] = [
-  {
-    id: "category",
-    title: "Category",
-    type: "checkbox",
-    options: [
-      { label: "Mobiles", value: "mobiles" },
-      { label: "Electronics and Gadgets", value: "electronics-and-gadgets" },
-      { label: "Vehicles", value: "vehicles" },
-      { label: "Home Living", value: "home-living" },
-      { label: "Property", value: "property" },
-      { label: "Others", value: "others" },
-    ],
-  },
-  {
-    id: "condition",
-    title: "Condition",
-    type: "checkbox",
-    options: [
-      { label: "New", value: "new" },
-      { label: "Used", value: "used" },
-    ],
-  },
-  {
-    id: "price",
-    title: "Price Range (BDT)",
-    type: "slider",
-    sliderRange: [0, 50000],
-    sliderStep: 20,
-  },
-];
-
-export type SelectedFilters = {
-  [groupId: string]: string[] | number[];
-};
-
-type FiltersProps = {
-  groups?: FilterGroup[];
-  onChange?: (selected: SelectedFilters) => void;
+export type FiltersProps = {
+  categories: Category[];
   showAsSheet?: boolean;
 };
 
-type FiltersContentProps = {
-  appliedCount: number;
-  selected: SelectedFilters;
-  selectedChips: { groupId: string; value: string }[];
-  groups: FilterGroup[];
-  updateSelection: (groupId: string, value: string) => void;
-  updateSlider: (groupId: string, value: number[]) => void;
-  clearFilters: () => void;
-};
+const FiltersContent = ({ categories }: { categories: Category[] }) => {
+  const { toggleFilter, updateBatch, clearAll, getArrayFilter, isSelected, getFilter } = useSmartFilter();
 
-const FiltersContent = ({
-  appliedCount,
-  selected,
-  selectedChips,
-  groups,
-  updateSelection,
-  updateSlider,
-  clearFilters
-}: FiltersContentProps) => (
-  <>
-    <header className="flex items-center justify-between space-y-6">
-      <div>
-        <p className="text-sm font-semibold text-foreground">Refine Results</p>
-        <p className="text-xs text-muted-foreground">{appliedCount} filter{appliedCount === 1 ? "" : "s"} applied</p>
-      </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-xs text-muted-foreground hover:text-primary"
-        onClick={clearFilters}
-      >
-        Reset
-      </Button>
-    </header>
+  const selectedCategories = getArrayFilter("category");
+  const selectedConditions = getArrayFilter("condition");
+  
+  const min = getFilter("min") ? Number(getFilter("min")) : 0;
+  const max = getFilter("max") ? Number(getFilter("max")) : 100000;
+  
+  // Local state for smooth slider interaction
+  const [localPrice, setLocalPrice] = useState<[number, number]>([min, max]);
 
-    <Accordion type="multiple" defaultValue={groups.map((group) => group.id)} className="space-y-4">
-      {groups.map((group) => (
-        <AccordionItem key={group.id} value={group.id} className="rounded-2xl border border-border/40 bg-background">
+  const hasPriceFilter = getFilter("min") || getFilter("max");
+  const appliedCount = selectedCategories.length + selectedConditions.length + (hasPriceFilter ? 1 : 0);
+
+  return (
+    <>
+      <header className="flex items-center justify-between space-y-6">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Refine Results</p>
+          <p className="text-xs text-muted-foreground">{appliedCount} filter{appliedCount === 1 ? "" : "s"} applied</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-xs text-muted-foreground hover:text-primary"
+          onClick={() => clearAll(["page", "limit", "sort", "location"])}
+        >
+          Reset
+        </Button>
+      </header>
+
+      <Accordion type="multiple" defaultValue={["category", "condition", "price"]} className="space-y-4">
+        {/* Category Filter */}
+        <AccordionItem value="category" className="rounded-2xl border border-border/40 bg-background">
           <AccordionTrigger className="px-4 py-3 text-sm font-semibold text-foreground">
-            {group.title}
+            Category
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            {group.type === "checkbox" && group.options ? (
-              <ul className="space-y-3">
-                {group.options.map((option) => {
-                  const isChecked = (selected[group.id] as string[] | undefined)?.includes(option.value);
-                  return (
-                    <li key={option.value} className="flex items-center gap-3">
-                      <Checkbox
-                        id={`${group.id}-${option.value}`}
-                        checked={isChecked}
-                        onCheckedChange={() => updateSelection(group.id, option.value)}
-                      />
-                      <label
-                        htmlFor={`${group.id}-${option.value}`}
-                        className="text-sm text-muted-foreground"
-                      >
-                        {option.label}
-                      </label>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : null}
-
-            {group.type === "slider" && group.sliderRange ? (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-foreground">Select Range</span>
-                    <span className="text-xs text-muted-foreground">
-                      ৳ {(selected[group.id] as number[])?.[0]?.toLocaleString() ?? group.sliderRange[0].toLocaleString()} - 
-                      ৳ {(selected[group.id] as number[])?.[1]?.toLocaleString() ?? group.sliderRange[1].toLocaleString()}
-                    </span>
-                  </div>
-                  <Slider
-                    min={group.sliderRange[0]}
-                    max={group.sliderRange[1]}
-                    step={group.sliderStep ?? 1}
-                    value={(selected[group.id] as number[]) ?? [group.sliderRange[0], group.sliderRange[1]]}
-                    onValueChange={(value) => updateSlider(group.id, value)}
-                    className="w-full"
+            <ul className="space-y-3">
+              {categories.map((cat) => (
+                <li key={cat._id} className="flex items-center gap-3">
+                  <Checkbox
+                    id={`cat-${cat.slug}`}
+                    checked={isSelected("category", cat.slug)}
+                    onCheckedChange={() => toggleFilter("category", cat.slug)}
                   />
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Min: ৳ {group.sliderRange[0].toLocaleString()}</span>
-                  <span>Max: ৳ {group.sliderRange[1].toLocaleString()}</span>
-                </div>
-              </div>
-            ) : null}
+                  <label htmlFor={`cat-${cat.slug}`} className="text-sm text-muted-foreground cursor-pointer">
+                    {cat.name}
+                  </label>
+                </li>
+              ))}
+            </ul>
           </AccordionContent>
         </AccordionItem>
-      ))}
-    </Accordion>
 
-    {selectedChips.length > 0 ? (
-      <div className="flex flex-wrap gap-2">
-        {selectedChips.map(({ groupId, value }) => (
-          <button
-            key={`${groupId}-${value}`}
-            type="button"
-            className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
-            onClick={() => updateSelection(groupId, value)}
-          >
-            {value}
-            <X className="h-3 w-3" />
-          </button>
-        ))}
-      </div>
-    ) : null}
-  </>
-);
+        {/* Condition Filter */}
+        <AccordionItem value="condition" className="rounded-2xl border border-border/40 bg-background">
+          <AccordionTrigger className="px-4 py-3 text-sm font-semibold text-foreground">
+            Condition
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <ul className="space-y-3">
+              {["new", "used"].map((cond) => (
+                <li key={cond} className="flex items-center gap-3">
+                  <Checkbox
+                    id={`cond-${cond}`}
+                    checked={isSelected("condition", cond)}
+                    onCheckedChange={() => toggleFilter("condition", cond)}
+                  />
+                  <label htmlFor={`cond-${cond}`} className="text-sm text-muted-foreground capitalize cursor-pointer">
+                    {cond}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
 
-const Filters = ({ groups = defaultFilters, showAsSheet = false }: FiltersProps) => {
-  const [selected, setSelected] = useState<SelectedFilters>({});
+        {/* Price Range Filter */}
+        <AccordionItem value="price" className="rounded-2xl border border-border/40 bg-background">
+          <AccordionTrigger className="px-4 py-3 text-sm font-semibold text-foreground">
+            Price Range (BDT)
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">Select Range</span>
+                  <span className="text-xs text-muted-foreground">
+                    ৳ {localPrice[0].toLocaleString()} - ৳ {localPrice[1].toLocaleString()}
+                  </span>
+                </div>
+                <Slider
+                  min={0}
+                  max={100000}
+                  step={100}
+                  value={localPrice}
+                  onValueChange={(val) => setLocalPrice(val as [number, number])}
+                  onValueCommit={(val) => updateBatch({ 
+                    min: val[0] === 0 ? null : val[0], 
+                    max: val[1] === 100000 ? null : val[1] 
+                  })}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Min: ৳ 0</span>
+                <span>Max: ৳ 100k+</span>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
-  const appliedCount = useMemo(
-    () =>
-      Object.values(selected).reduce((count, value) => {
-        if (Array.isArray(value)) {
-          return count + value.length;
-        }
-        return count;
-      }, 0),
-    [selected]
+      {/* Applied Chips */}
+      {(selectedCategories.length > 0 || selectedConditions.length > 0) && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {selectedCategories.map((slug) => (
+            <button
+              key={slug}
+              type="button"
+              className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+              onClick={() => toggleFilter("category", slug)}
+            >
+              {categories.find(c => c.slug === slug)?.name || slug}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+          {selectedConditions.map((cond) => (
+            <button
+              key={cond}
+              type="button"
+              className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+              onClick={() => toggleFilter("condition", cond)}
+            >
+              {cond}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+        </div>
+      )}
+    </>
   );
+};
 
-  const selectedChips = useMemo(() => {
-    const entries: { groupId: string; value: string }[] = [];
-    Object.entries(selected).forEach(([groupId, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          if (typeof item === "string") {
-            entries.push({ groupId, value: item });
-          }
-        });
-      }
-    });
-    return entries;
-  }, [selected]);
-
-  const updateSelection = (groupId: string, value: string) => {
-    setSelected((prev) => {
-      const prevValues = (prev[groupId] as string[]) ?? [];
-      const nextValues = prevValues.includes(value)
-        ? prevValues.filter((item) => item !== value)
-        : [...prevValues, value];
-      return { ...prev, [groupId]: nextValues };
-    });
-  };
-
-  const updateSlider = (groupId: string, value: number[]) => {
-    setSelected((prev) => ({ ...prev, [groupId]: value }));
-  };
-
-  const clearFilters = () => {
-    setSelected({});
-  };
-
+const Filters = ({ categories = [], showAsSheet = false }: FiltersProps) => {
   if (showAsSheet) {
     return (
       <Sheet>
@@ -251,19 +190,11 @@ const Filters = ({ groups = defaultFilters, showAsSheet = false }: FiltersProps)
           <SheetHeader>
             <SheetTitle>Filters</SheetTitle>
             <SheetDescription>
-              Select up to 5 filters to refine your search.
+              Refine your search results.
             </SheetDescription>
           </SheetHeader>
-          <ScrollArea className="h-[550px] px-6">
-            <FiltersContent
-              appliedCount={appliedCount}
-              selected={selected}
-              selectedChips={selectedChips}
-              groups={groups}
-              updateSelection={updateSelection}
-              updateSlider={updateSlider}
-              clearFilters={clearFilters}
-            />
+          <ScrollArea className="h-[calc(100vh-120px)] px-2 mt-4">
+            <FiltersContent categories={categories} />
           </ScrollArea>
         </SheetContent>
       </Sheet>
@@ -271,16 +202,8 @@ const Filters = ({ groups = defaultFilters, showAsSheet = false }: FiltersProps)
   }
 
   return (
-    <aside className="rounded-3xl border border-border/40 bg-background/80 p-6 shadow-sm">
-      <FiltersContent
-        appliedCount={appliedCount}
-        selected={selected}
-        selectedChips={selectedChips}
-        groups={groups}
-        updateSelection={updateSelection}
-        updateSlider={updateSlider}
-        clearFilters={clearFilters}
-      />
+    <aside className="rounded-3xl border border-border/40 bg-background/80 p-6 shadow-sm sticky top-24">
+      <FiltersContent categories={categories} />
     </aside>
   );
 };

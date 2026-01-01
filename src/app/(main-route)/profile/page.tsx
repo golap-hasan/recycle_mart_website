@@ -1,4 +1,4 @@
-import { Bell, Heart, Megaphone, TrendingUp } from "lucide-react";
+import { Bell, Heart, Megaphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,35 +28,30 @@ const stats = [
   },
 ];
 
-const recentActivity = [
-  {
-    title: "Bike Helmet added to favourites",
-    meta: "Today at 10:45 AM",
-    badge: "Favourite",
-  },
-  {
-    title: "Gaming Laptop ad boosted",
-    meta: "Yesterday at 6:12 PM",
-    badge: "Promotion",
-  },
-  {
-    title: "Alert matched: iPhone 14 Pro",
-    meta: "Yesterday at 9:20 AM",
-    badge: "Alert",
-  },
-];
+// const recentActivity = [
+//   {
+//     title: "Bike Helmet added to favourites",
+//     meta: "Today at 10:45 AM",
+//     badge: "Favourite",
+//   },
+//   {
+//     title: "Gaming Laptop ad boosted",
+//     meta: "Yesterday at 6:12 PM",
+//     badge: "Promotion",
+//   },
+//   {
+//     title: "Alert matched: iPhone 14 Pro",
+//     meta: "Yesterday at 9:20 AM",
+//     badge: "Alert",
+//   },
+// ];
 
 export default function ProfileDashboardPage() {
   return (
     <div className="space-y-6">
       <ProfilePageHeader
-        title="Welcome back, Rafi"
+        title="Welcome back"
         description="Track your ads, favourites, alerts and account performance in one place."
-        actions={
-          <Button size="sm" className="rounded-full">
-            Post a new ad
-          </Button>
-        }
       />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -135,7 +130,7 @@ export default function ProfileDashboardPage() {
         </Card>
       </section>
 
-      <Card className="border-border/60 bg-card/95 shadow-sm">
+      {/* <Card className="border-border/60 bg-card/95 shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
             <TrendingUp className="h-4 w-4 text-primary" /> Recent activity
@@ -154,7 +149,7 @@ export default function ProfileDashboardPage() {
             </div>
           ))}
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

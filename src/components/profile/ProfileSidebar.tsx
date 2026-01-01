@@ -9,7 +9,7 @@ import {
   Megaphone,
   Settings,
   Ticket,
-  Bell,
+  // Bell,
   UserCircle,
   CreditCard,
   Menu,
@@ -57,7 +57,7 @@ const navSections: NavSection[] = [
     title: "Overview",
     items: [
       { label: "Dashboard", href: "/profile", icon: LayoutDashboard },
-      { label: "Alerts", href: "/profile/alerts", icon: Bell, badge: 3 },
+      // { label: "Alerts", href: "/profile/alerts", icon: Bell, badge: 3 },
     ],
   },
   {

@@ -19,34 +19,35 @@ import { Badge } from '@/components/ui/badge';
 import {
   sortOptions as defaultSortOptions,
   locationOptions as defaultLocationOptions,
+  type FiltersProps,
 } from '@/components/ads/filters';
 
-const Filters = dynamic(() => import('@/components/ads/filters'), {
+const Filters = dynamic<FiltersProps>(() => import('@/components/ads/filters'), {
   ssr: false,
 });
 
 type Option = { value: string; label: string };
 
+import { Category } from '@/types/category.type';
+import { Ad } from '@/types/ad.type';
+import { timeAgo } from '@/lib/utils';
+import { useSmartFilter } from '@/hooks/useSmartFilter';
+
 type Props = {
-  listings: {
-    id: string;
-    title: string;
-    price: string;
-    location: string;
-    postedAt: string;
-    imageUrl: string;
-    isFeatured?: boolean;
-    isUrgent?: boolean;
-  }[];
+  listings: Ad[];
   sortOptions?: Option[];
   locationOptions?: Option[];
+  categories?: Category[];
 };
 
 export default function AllAdsExplorer({
   listings,
   sortOptions = defaultSortOptions,
   locationOptions = defaultLocationOptions,
+  categories = [],
 }: Props) {
+  const { getFilter, updateFilter } = useSmartFilter();
+
   return (
     <section>
       <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -81,7 +82,10 @@ export default function AllAdsExplorer({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <span className="text-foreground">Sort by:</span>
-              <Select defaultValue={sortOptions[0]?.value ?? 'newest'}>
+              <Select 
+                value={getFilter('sort') || sortOptions[0]?.value} 
+                onValueChange={(val) => updateFilter('sort', val)}
+              >
                 <SelectTrigger className="h-9 min-w-[200px] rounded-full border-border/40 bg-background text-sm">
                   <SelectValue placeholder="Select order" />
                 </SelectTrigger>
@@ -96,7 +100,10 @@ export default function AllAdsExplorer({
             </div>
 
             <div className="flex w-full flex-1 flex-wrap items-center gap-3 lg:justify-end">
-              <Select defaultValue={locationOptions[0]?.value ?? 'dhaka'}>
+              <Select 
+                value={getFilter('location') || locationOptions[0]?.value}
+                onValueChange={(val) => updateFilter('location', val)}
+              >
                 <SelectTrigger className="h-10 min-w-40 rounded-full border-border/40 bg-background text-sm">
                   <SelectValue placeholder="Select city" />
                 </SelectTrigger>
@@ -112,6 +119,8 @@ export default function AllAdsExplorer({
               <div className="relative flex-1 min-w-48">
                 <Input
                   placeholder="What are you looking for?"
+                  defaultValue={getFilter('searchTerm')}
+                  onChange={(e) => updateFilter('searchTerm', e.target.value, 500)}
                   className="h-10 rounded-full border-border/40 bg-background pl-5 pr-12 text-sm"
                 />
                 <Button
@@ -127,12 +136,12 @@ export default function AllAdsExplorer({
           <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
             {/* Mobile Filter Button */}
             <div className="lg:hidden">
-              <Filters showAsSheet={true} />
+              <Filters showAsSheet={true} categories={categories} />
             </div>
 
             {/* Filter */}
-            <div className="hidden lg:block">
-              <Filters />
+            <div className="hidden lg:block border-r border-border/40 pr-6">
+              <Filters categories={categories} />
             </div>
 
             {/* Ads */}
@@ -143,10 +152,10 @@ export default function AllAdsExplorer({
                     key={listing.id}
                     className="group relative overflow-hidden rounded-2xl border border-border/40 bg-background/90 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                   >
-                    <Link href={`/ads/apple-iphone-14`} className="flex h-full">
+                    <Link href={`/ads/${listing.id}`} className="flex h-full">
                       <div className="relative w-32 h-32 shrink-0 overflow-hidden rounded-l-2xl">
                         <Image
-                          src={listing.imageUrl}
+                          src={listing.coverImage || "/placeholder-image.png"}
                           alt={listing.title}
                           fill
                           className="object-cover transition duration-300 group-hover:scale-105"
@@ -171,7 +180,7 @@ export default function AllAdsExplorer({
                             {listing.title}
                           </h3>
                           <p className="text-lg font-bold text-primary">
-                            {listing.price}
+                            ৳ {listing.price.toLocaleString()}
                           </p>
                         </div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -180,7 +189,7 @@ export default function AllAdsExplorer({
                             {listing.location}
                           </p>
                           <p className="text-muted-foreground/80">
-                            Posted {listing.postedAt}
+                            Posted {timeAgo(listing.postedAt)}
                           </p>
                         </div>
                       </div>
@@ -209,7 +218,7 @@ export default function AllAdsExplorer({
 
             {/* Grid View */}
             <TabsContent value="grid" className="order-1 space-y-6 lg:order-2">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {listings.map(listing => (
                   <article
                     key={listing.id}
@@ -221,7 +230,7 @@ export default function AllAdsExplorer({
                     >
                       <div className="relative aspect-4/3 overflow-hidden">
                         <Image
-                          src={listing.imageUrl}
+                          src={listing.coverImage || "/placeholder-image.png"}
                           alt={listing.title}
                           fill
                           className="object-cover transition duration-300 group-hover:scale-105"
@@ -252,7 +261,7 @@ export default function AllAdsExplorer({
                             {listing.title}
                           </h3>
                           <p className="text-sm font-bold text-primary">
-                            {listing.price}
+                            ৳ {listing.price.toLocaleString()}
                           </p>
                         </div>
                         <div className="mt-auto space-y-1 text-xs text-muted-foreground">
@@ -261,7 +270,7 @@ export default function AllAdsExplorer({
                             {listing.location}
                           </p>
                           <p className="text-muted-foreground/80">
-                            Posted {listing.postedAt}
+                            Posted {timeAgo(listing.postedAt)}
                           </p>
                         </div>
                       </div>

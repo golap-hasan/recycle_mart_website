@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import CustomBreadcrumb from "@/tools/CustomBreadcrumb";
 import AllAdsExplorer from "@/components/ads/AllAdsExplorer";
 import PageLayout from "@/tools/PageLayout";
-import { sampleListings } from "@/components/ads/adsData";
 import { sortOptions, locationOptions } from "@/components/ads/filters";
+import { fetchAllAds } from "@/services/ads";
+import { fetchAllCategories } from "@/services/category";
+import { Ad } from "@/types/ad.type";
 
 export const metadata: Metadata = {
   title: "All Ads | Recycle Mart",
@@ -16,15 +18,29 @@ const breadcrumbs = [
   { name: "All Ads", isCurrent: true },
 ];
 
-const AllAdsPage = () => {
+const AllAdsPage = async (props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const searchParams = await props.searchParams;
+  
+  // Parallel fetching
+  const [categoriesRes, adsRes] = await Promise.all([
+    fetchAllCategories(),
+    fetchAllAds(searchParams),
+  ]);
+
+  const categories = categoriesRes?.success ? categoriesRes.data : [];
+  const listings = (adsRes?.success ? adsRes.data : []) as Ad[];
+
   return (
     <PageLayout paddingSize="small">
       <div className="custom-width mx-auto">
         <CustomBreadcrumb links={breadcrumbs} />
         <AllAdsExplorer
-          listings={sampleListings}
+          listings={listings}
           sortOptions={sortOptions}
           locationOptions={locationOptions}
+          categories={categories}
         />
       </div>
     </PageLayout>

@@ -4,17 +4,7 @@ import CustomPagination from "@/tools/CustomPagination";
 import { fetchMyFavorites } from "@/services/favorite";
 import { Heart } from "lucide-react";
 
-interface FavoriteItem {
-  _id: string;
-  adId: string;
-  title: string;
-  price: string | number;
-  location: string;
-  postedAt: string;
-  imageUrl: string;
-  isFeatured: boolean;
-  isUrgent: boolean;
-}
+import { FavoriteItem } from "@/types/favorite.type";
 
 export default async function FavouriteAdsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
