@@ -60,7 +60,6 @@ export default async function MyAdsPage(props: {
                 <CustomPagination
                   currentPage={meta.page}
                   totalPages={meta.totalPage}
-                  searchParams={searchParams}
                 />
               </div>
             )}

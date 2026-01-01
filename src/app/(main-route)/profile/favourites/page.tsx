@@ -60,7 +60,6 @@ export default async function FavouriteAdsPage(props: {
                 <CustomPagination
                   currentPage={meta.page}
                   totalPages={meta.totalPage}
-                  searchParams={searchParams}
                 />
               </div>
             )}

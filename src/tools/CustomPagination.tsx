@@ -1,4 +1,7 @@
+"use client";
+
 import * as React from "react"
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Pagination,
   PaginationContent,
@@ -54,24 +57,24 @@ const getPaginationRange = (totalPages: number, currentPage: number, siblingCoun
 type CustomPaginationProps = {
   currentPage: number;
   totalPages: number;
-  searchParams?: Record<string, string | string[] | undefined>;
 };
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({
   currentPage,
   totalPages,
-  searchParams = {},
 }) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const paginationRange = getPaginationRange(totalPages, currentPage);
 
   if (currentPage === 0 || paginationRange.length === 0) {
     return null;
   }
 
-  const createPageUrl = (page: number) => {
-    const params = new URLSearchParams(searchParams as Record<string, string>);
-    params.set("page", page.toString());
-    return `?${params.toString()}`;
+  const createPageUrl = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
   };
 
   return (

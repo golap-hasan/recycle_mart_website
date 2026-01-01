@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { X, SlidersHorizontal } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Category } from "@/types/category.type";
+import { CategorySkeleton } from "./CategorySkeleton";
 import { useSmartFilter } from "@/hooks/useSmartFilter";
 
 export const sortOptions = [
@@ -71,20 +72,23 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
             Category
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <RadioGroup 
-              value={selectedCategory} 
-              onValueChange={(val) => updateFilter("category", val)}
-              className="mt-2"
-            >
-              {categories.map((cat) => (
-                <div key={cat._id} className="flex items-center gap-3">
-                  <RadioGroupItem value={cat.slug} id={`cat-${cat.slug}`} />
-                  <Label htmlFor={`cat-${cat.slug}`} className="text-sm text-muted-foreground font-normal cursor-pointer flex-1">
-                    {cat.name}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+            {categories.length > 0 ? (
+              <RadioGroup 
+                value={selectedCategory} 
+                onValueChange={(val) => updateFilter("category", val)}
+              >
+                {categories.map((cat) => (
+                  <div key={cat._id} className="flex items-center gap-3">
+                    <RadioGroupItem value={cat.slug} id={`cat-${cat.slug}`} />
+                    <Label htmlFor={`cat-${cat.slug}`} className="text-sm text-muted-foreground font-normal cursor-pointer flex-1">
+                      {cat.name}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            ) : (
+              <CategorySkeleton />
+            )}
           </AccordionContent>
         </AccordionItem>
 
@@ -97,7 +101,6 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
             <RadioGroup 
               value={selectedCondition} 
               onValueChange={(val) => updateFilter("condition", val)}
-              className="mt-2"
             >
               {["new", "used"].map((cond) => (
                 <div key={cond} className="flex items-center gap-3">

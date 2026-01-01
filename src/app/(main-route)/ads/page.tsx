@@ -25,11 +25,12 @@ const AllAdsPage = async (props: {
   // Parallel fetching
   const [categoriesRes, adsRes] = await Promise.all([
     fetchAllCategories(),
-    fetchAllAds(searchParams),
+    fetchAllAds({ ...searchParams, limit: "1" }),
   ]);
 
   const categories = categoriesRes?.success ? categoriesRes.data : [];
   const listings = (adsRes?.success ? adsRes.data : []) as Ad[];
+  const meta = adsRes?.meta;
 
   return (
     <PageLayout paddingSize="small">
@@ -38,6 +39,7 @@ const AllAdsPage = async (props: {
         <AllAdsExplorer
           listings={listings}
           categories={categories}
+          meta={meta}
         />
       </div>
     </PageLayout>
