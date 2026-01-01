@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import CustomBreadcrumb from "@/tools/CustomBreadcrumb";
 import AllAdsExplorer from "@/components/ads/AllAdsExplorer";
 import PageLayout from "@/tools/PageLayout";
-import { sortOptions, locationOptions } from "@/components/ads/filters";
 import { fetchAllAds } from "@/services/ads";
 import { fetchAllCategories } from "@/services/category";
 import { Ad } from "@/types/ad.type";
@@ -38,8 +37,6 @@ const AllAdsPage = async (props: {
         <CustomBreadcrumb links={breadcrumbs} />
         <AllAdsExplorer
           listings={listings}
-          sortOptions={sortOptions}
-          locationOptions={locationOptions}
           categories={categories}
         />
       </div>

@@ -7,27 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ListTree, Search, Grid3X3, List, Heart } from 'lucide-react';
+import { ListTree, Grid3X3, List, Heart, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  sortOptions as defaultSortOptions,
-  locationOptions as defaultLocationOptions,
-  type FiltersProps,
-} from '@/components/ads/filters';
+import { type FiltersProps } from '@/components/ads/filters';
 
 const Filters = dynamic<FiltersProps>(() => import('@/components/ads/filters'), {
   ssr: false,
 });
 
-type Option = { value: string; label: string };
-
+import { LocationSelector } from '@/components/ads/LocationSelector';
 import { Category } from '@/types/category.type';
 import { Ad } from '@/types/ad.type';
 import { timeAgo } from '@/lib/utils';
@@ -35,15 +23,11 @@ import { useSmartFilter } from '@/hooks/useSmartFilter';
 
 type Props = {
   listings: Ad[];
-  sortOptions?: Option[];
-  locationOptions?: Option[];
   categories?: Category[];
 };
 
 export default function AllAdsExplorer({
   listings,
-  sortOptions = defaultSortOptions,
-  locationOptions = defaultLocationOptions,
   categories = [],
 }: Props) {
   const { getFilter, updateFilter } = useSmartFilter();
@@ -67,12 +51,12 @@ export default function AllAdsExplorer({
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-4">
-          <TabsTrigger value="list" className="flex items-center gap-2">
+        <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-4 rounded-full">
+          <TabsTrigger value="list" className="flex items-center gap-2 rounded-full">
             <List className="h-4 w-4" />
             List View
           </TabsTrigger>
-          <TabsTrigger value="grid" className="flex items-center gap-2">
+          <TabsTrigger value="grid" className="flex items-center gap-2 rounded-full">
             <Grid3X3 className="h-4 w-4" />
             Grid View
           </TabsTrigger>
@@ -80,41 +64,9 @@ export default function AllAdsExplorer({
 
         <div className="flex flex-col gap-4 bg-background/80">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <span className="text-foreground">Sort by:</span>
-              <Select 
-                value={getFilter('sort') || sortOptions[0]?.value} 
-                onValueChange={(val) => updateFilter('sort', val)}
-              >
-                <SelectTrigger className="h-9 min-w-[200px] rounded-full border-border/40 bg-background text-sm">
-                  <SelectValue placeholder="Select order" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sortOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             <div className="flex w-full flex-1 flex-wrap items-center gap-3 lg:justify-end">
-              <Select 
-                value={getFilter('location') || locationOptions[0]?.value}
-                onValueChange={(val) => updateFilter('location', val)}
-              >
-                <SelectTrigger className="h-10 min-w-40 rounded-full border-border/40 bg-background text-sm">
-                  <SelectValue placeholder="Select city" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locationOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Location Selector */}
+              <LocationSelector />
 
               <div className="relative flex-1 min-w-48">
                 <Input

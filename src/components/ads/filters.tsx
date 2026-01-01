@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { X, SlidersHorizontal } from "lucide-react";
@@ -30,20 +29,23 @@ export type FiltersProps = {
   showAsSheet?: boolean;
 };
 
-const FiltersContent = ({ categories }: { categories: Category[] }) => {
-  const { toggleFilter, updateBatch, clearAll, getArrayFilter, isSelected, getFilter } = useSmartFilter();
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
-  const selectedCategories = getArrayFilter("category");
-  const selectedConditions = getArrayFilter("condition");
+const FiltersContent = ({ categories }: { categories: Category[] }) => {
+  const { updateFilter, updateBatch, clearAll, getFilter } = useSmartFilter();
+
+  const selectedCategory = getFilter("category");
+  const selectedCondition = getFilter("condition");
   
-  const min = getFilter("min") ? Number(getFilter("min")) : 0;
-  const max = getFilter("max") ? Number(getFilter("max")) : 100000;
+  const minPrice = getFilter("minPrice") ? Number(getFilter("minPrice")) : 0;
+  const maxPrice = getFilter("maxPrice") ? Number(getFilter("maxPrice")) : 100000;
   
   // Local state for smooth slider interaction
-  const [localPrice, setLocalPrice] = useState<[number, number]>([min, max]);
+  const [localPrice, setLocalPrice] = useState<[number, number]>([minPrice, maxPrice]);
 
-  const hasPriceFilter = getFilter("min") || getFilter("max");
-  const appliedCount = selectedCategories.length + selectedConditions.length + (hasPriceFilter ? 1 : 0);
+  const hasPriceFilter = getFilter("minPrice") || getFilter("maxPrice");
+  const appliedCount = (selectedCategory ? 1 : 0) + (selectedCondition ? 1 : 0) + (hasPriceFilter ? 1 : 0);
 
   return (
     <>
@@ -56,7 +58,7 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
           variant="ghost"
           size="sm"
           className="text-xs text-muted-foreground hover:text-primary"
-          onClick={() => clearAll(["page", "limit", "sort", "location"])}
+          onClick={() => clearAll(["page", "limit", "sort", "location", "searchTerm"])}
         >
           Reset
         </Button>
@@ -69,20 +71,20 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
             Category
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <ul className="space-y-3">
+            <RadioGroup 
+              value={selectedCategory} 
+              onValueChange={(val) => updateFilter("category", val)}
+              className="mt-2"
+            >
               {categories.map((cat) => (
-                <li key={cat._id} className="flex items-center gap-3">
-                  <Checkbox
-                    id={`cat-${cat.slug}`}
-                    checked={isSelected("category", cat.slug)}
-                    onCheckedChange={() => toggleFilter("category", cat.slug)}
-                  />
-                  <label htmlFor={`cat-${cat.slug}`} className="text-sm text-muted-foreground cursor-pointer">
+                <div key={cat._id} className="flex items-center gap-3">
+                  <RadioGroupItem value={cat.slug} id={`cat-${cat.slug}`} />
+                  <Label htmlFor={`cat-${cat.slug}`} className="text-sm text-muted-foreground font-normal cursor-pointer flex-1">
                     {cat.name}
-                  </label>
-                </li>
+                  </Label>
+                </div>
               ))}
-            </ul>
+            </RadioGroup>
           </AccordionContent>
         </AccordionItem>
 
@@ -92,20 +94,20 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
             Condition
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <ul className="space-y-3">
+            <RadioGroup 
+              value={selectedCondition} 
+              onValueChange={(val) => updateFilter("condition", val)}
+              className="mt-2"
+            >
               {["new", "used"].map((cond) => (
-                <li key={cond} className="flex items-center gap-3">
-                  <Checkbox
-                    id={`cond-${cond}`}
-                    checked={isSelected("condition", cond)}
-                    onCheckedChange={() => toggleFilter("condition", cond)}
-                  />
-                  <label htmlFor={`cond-${cond}`} className="text-sm text-muted-foreground capitalize cursor-pointer">
+                <div key={cond} className="flex items-center gap-3">
+                  <RadioGroupItem value={cond} id={`cond-${cond}`} />
+                  <Label htmlFor={`cond-${cond}`} className="text-sm text-muted-foreground font-normal capitalize cursor-pointer flex-1">
                     {cond}
-                  </label>
-                </li>
+                  </Label>
+                </div>
               ))}
-            </ul>
+            </RadioGroup>
           </AccordionContent>
         </AccordionItem>
 
@@ -130,8 +132,8 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
                   value={localPrice}
                   onValueChange={(val) => setLocalPrice(val as [number, number])}
                   onValueCommit={(val) => updateBatch({ 
-                    min: val[0] === 0 ? null : val[0], 
-                    max: val[1] === 100000 ? null : val[1] 
+                    minPrice: val[0] === 0 ? null : val[0], 
+                    maxPrice: val[1] === 100000 ? null : val[1] 
                   })}
                   className="w-full"
                 />
@@ -146,30 +148,28 @@ const FiltersContent = ({ categories }: { categories: Category[] }) => {
       </Accordion>
 
       {/* Applied Chips */}
-      {(selectedCategories.length > 0 || selectedConditions.length > 0) && (
+      {(selectedCategory || selectedCondition) && (
         <div className="flex flex-wrap gap-2 mt-4">
-          {selectedCategories.map((slug) => (
+          {selectedCategory && (
             <button
-              key={slug}
               type="button"
               className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
-              onClick={() => toggleFilter("category", slug)}
+              onClick={() => updateFilter("category", null)}
             >
-              {categories.find(c => c.slug === slug)?.name || slug}
+              {categories.find(c => c.slug === selectedCategory)?.name || selectedCategory}
               <X className="h-3 w-3" />
             </button>
-          ))}
-          {selectedConditions.map((cond) => (
+          )}
+          {selectedCondition && (
             <button
-              key={cond}
               type="button"
               className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
-              onClick={() => toggleFilter("condition", cond)}
+              onClick={() => updateFilter("condition", null)}
             >
-              {cond}
+              {selectedCondition}
               <X className="h-3 w-3" />
             </button>
-          ))}
+          )}
         </div>
       )}
     </>
