@@ -39,20 +39,20 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
         {images.length > 1 && (
           <>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="icon"
-              className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-lg"
+              className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm text-foreground shadow-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               onClick={prevImage}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
             </Button>
             <Button
-              variant="secondary"
+              variant="ghost"
               size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-lg"
+              className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm text-foreground shadow-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               onClick={nextImage}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
             </Button>
           </>
         )}
