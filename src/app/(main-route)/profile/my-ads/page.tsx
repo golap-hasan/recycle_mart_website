@@ -42,13 +42,13 @@ export default async function MyAdsPage(props: {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {ads.map((ad: Ad) => (
                 <ListingCard
-                  key={ad._id}
-                  id={ad._id}
+                  key={ad.id}
+                  id={ad.id}
                   title={ad.title}
                   price={ad.price}
                   location={ad.location}
-                  postedAt={timeAgo(ad.createdAt)}
-                  imageUrl={ad.images?.[0] || ""}
+                  postedAt={timeAgo(ad.postedAt)}
+                  imageUrl={ad.coverImage || ""}
                   isFeatured={ad.isFeatured}
                   isUrgent={ad.isUrgent}
                 />
