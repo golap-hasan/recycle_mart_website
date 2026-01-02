@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ListTree, Grid3X3, List, Search } from 'lucide-react';
+import { ListTree, Grid3X3, List, Search, SlidersHorizontal, Globe } from 'lucide-react';
 import { AdListCard } from '@/components/ads/AdListCard';
 import { AdGridCard } from '@/components/ads/AdGridCard';
 import Filters from '@/components/ads/filters';
@@ -31,86 +31,99 @@ export default function AllAdsExplorer({
   const currentView = getFilter('view') || 'list';
 
   return (
-    <section>
-      <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold text-foreground">
-            Buy & Sell Anything in Bangladesh
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Showing {listings.length} curated ads — refine filters to discover
-            more deals tailored to you.
-          </p>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <ListTree className="h-4 w-4" />
-          <span>Browse by category or location</span>
-        </div>
-      </div>
-
+    <section className="py-4 md:py-8">
       <Tabs 
         value={currentView} 
         onValueChange={(val) => updateFilter('view', val)} 
         className="w-full"
       >
-        <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-4 rounded-full">
-          <TabsTrigger value="list" className="flex items-center gap-2 rounded-full">
-            <List className="h-4 w-4" />
-            List View
-          </TabsTrigger>
-          <TabsTrigger value="grid" className="flex items-center gap-2 rounded-full">
-            <Grid3X3 className="h-4 w-4" />
-            Grid View
-          </TabsTrigger>
-        </TabsList>
+        {/* Heading Section */}
+        <div className="mb-6 space-y-2">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Buy & Sell Anything in Bangladesh
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Showing {listings.length} curated ads — discover the best deals tailored to you.
+          </p>
+        </div>
 
-        <div className="flex flex-col gap-4 bg-background/80">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex w-full flex-1 flex-wrap items-center gap-3 lg:justify-end">
-              {/* Location Selector */}
-              <LocationSelector />
+        {/* Controls Section (Search, Location, Filter, View) */}
+        <div className="flex flex-col gap-4 mb-8">
+          
+          {/* Top Row: Search (Full width on mobile, flexible on desktop) */}
+          <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
+            
+            {/* Search Box */}
+            <div className="relative flex-1 order-1 lg:order-2">
+              <Input
+                placeholder="What are you looking for?"
+                defaultValue={getFilter('searchTerm')}
+                onChange={(e) => updateFilter('searchTerm', e.target.value, 500)}
+                className="h-12 md:h-10 rounded-full border-border/60 bg-background pl-5 pr-12 text-sm"
+              />
+              <Button
+                size="icon"
+                className="absolute right-1 top-1 h-10 w-10 md:h-8 md:w-8 rounded-full bg-primary text-primary-foreground"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
 
-              <div className="relative flex-1 min-w-48">
-                <Input
-                  placeholder="What are you looking for?"
-                  defaultValue={getFilter('searchTerm')}
-                  onChange={(e) => updateFilter('searchTerm', e.target.value, 500)}
-                  className="h-10 rounded-full border-border/40 bg-background pl-5 pr-12 text-sm"
-                />
-                <Button
-                  size="icon"
-                  className="absolute right-1 top-1 h-8 w-8 rounded-full bg-primary text-primary-foreground shadow"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
+            {/* Location & Filter Group for Mobile */}
+            <div className="flex items-center gap-2 order-2 lg:order-1">
+              <div className="flex-1 lg:w-[250px]">
+                <LocationSelector className="h-12 md:h-10 w-full" />
               </div>
+              <div className="lg:hidden">
+                 <Filters showAsSheet={true} categories={categories} />
+              </div>
+            </div>
+
+            {/* View Toggle (Desktop will stay right, mobile will stack below) */}
+            <div className="order-3">
+              <TabsList className="grid w-full grid-cols-2 lg:w-[200px] rounded-full h-12 md:h-10">
+                <TabsTrigger value="list" className="rounded-full">
+                  <List className="h-4 w-4 mr-2" />
+                  List
+                </TabsTrigger>
+                <TabsTrigger value="grid" className="rounded-full">
+                  <Grid3X3 className="h-4 w-4 mr-2" />
+                  Grid
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+          {/* Sidebar Filter (Desktop Only) */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24">
+               <div className="flex items-center gap-2 mb-4">
+                 <SlidersHorizontal className="h-4 w-4 text-primary" />
+                 <h2 className="font-bold text-lg">Filters</h2>
+               </div>
+               <Filters categories={categories} />
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-            {/* Mobile Filter Button */}
-            <div className="lg:hidden">
-              <Filters showAsSheet={true} categories={categories} />
-            </div>
-
-            {/* Filter */}
-            <div className="hidden lg:block border-r border-border/40 pr-6">
-              <Filters categories={categories} />
-            </div>
-
-            {/* Ads */}
-            <TabsContent value="list" className="order-1 space-y-6 lg:order-2">
+          {/* Ads Content Area */}
+          <div className="min-h-[500px]">
+            <TabsContent value="list" className="mt-0 space-y-6">
               <div className="grid gap-4 grid-cols-1">
                 {listings.map(listing => (
                   <AdListCard key={listing.id} ad={listing} />
                 ))}
               </div>
 
-              <Card className="border-border/40 bg-background/90">
-                <CardContent className="flex flex-col items-center justify-between gap-4 py-6 text-sm text-muted-foreground sm:flex-row">
-                  <span>Didn&apos;t find what you&apos;re looking for?</span>
+              <Card className="border-border/40 bg-background/90 overflow-hidden rounded-2xl border-dashed">
+                <CardContent className="flex flex-col items-center justify-between gap-6 py-8 text-sm text-muted-foreground sm:flex-row px-8">
+                  <div className="space-y-1 text-center sm:text-left">
+                    <p className="font-bold text-foreground text-lg">Didn&apos;t find what you&apos;re looking for?</p>
+                    <p>Post your own ad and reach millions of buyers today!</p>
+                  </div>
                   <Link href="/ads/create">
-                    <Button className="rounded-full bg-primary text-primary-foreground">
+                    <Button className="rounded-full bg-primary px-8 h-12 text-base font-bold text-primary-foreground hover:scale-105 transition-transform shadow-xl shadow-primary/20">
                       Post an ad for free
                     </Button>
                   </Link>
@@ -129,7 +142,7 @@ export default function AllAdsExplorer({
             </TabsContent>
 
             {/* Grid View */}
-            <TabsContent value="grid" className="order-1 space-y-6 lg:order-2">
+            <TabsContent value="grid" className="mt-0 space-y-6">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {listings.map(listing => (
                   <AdGridCard key={listing.id} ad={listing} />
@@ -150,34 +163,28 @@ export default function AllAdsExplorer({
         </div>
       </Tabs>
 
-      <section className="grid gap-6 rounded-3xl border border-border/30 bg-background/60 p-8 text-sm text-muted-foreground md:grid-cols-3 mt-6">
-        <div className="space-y-3">
-          <h2 className="text-base font-semibold text-foreground">
-            Why sell with Recycle Mart?
-          </h2>
-          <p>
-            Reach millions of verified buyers across Bangladesh with simple
-            listing tools and trusted support.
-          </p>
+      {/* Trust Badges */}
+      <section className="grid gap-8 rounded-3xl border border-border/30 bg-background/50 p-6 md:p-10 text-sm text-muted-foreground md:grid-cols-3 mt-12">
+        <div className="flex flex-col items-center text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <Globe className="h-6 w-6" />
+          </div>
+          <h2 className="text-base font-bold text-foreground">Why sell with Recycle Mart?</h2>
+          <p>Reach millions of verified buyers across Bangladesh with simple tools.</p>
         </div>
-        <div className="space-y-3">
-          <h2 className="text-base font-semibold text-foreground">
-            Secure transactions
-          </h2>
-          <p>
-            Avoid scams with safety tips, verified sellers, and our dedicated
-            customer care team.
-          </p>
+        <div className="flex flex-col items-center text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <ListTree className="h-6 w-6" />
+          </div>
+          <h2 className="text-base font-bold text-foreground">Secure transactions</h2>
+          <p>Avoid scams with safety tips and our dedicated customer care team.</p>
         </div>
-        <div className="space-y-3">
-          <h2 className="text-base font-semibold text-foreground">
-            Need help?
-          </h2>
-          <p>
-            Call us at{' '}
-            <span className="font-semibold text-primary">01302-000000</span> or
-            email support@allpricebd.com.
-          </p>
+        <div className="flex flex-col items-center text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <Search className="h-6 w-6" />
+          </div>
+          <h2 className="text-base font-bold text-foreground">Need help?</h2>
+          <p>Call us at <span className="text-primary font-bold">01302-000000</span> or email support team.</p>
         </div>
       </section>
     </section>

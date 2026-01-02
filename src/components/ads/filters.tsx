@@ -184,7 +184,7 @@ const Filters = ({ categories = [], showAsSheet = false }: FiltersProps) => {
     return (
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="sm" className="lg:hidden">
+          <Button variant="outline" size="lg" className="lg:hidden h-12 rounded-full">
             <SlidersHorizontal className="h-4 w-4 mr-2" />
             Filters
           </Button>
