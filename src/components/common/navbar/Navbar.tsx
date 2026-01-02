@@ -1,5 +1,4 @@
 import { fetchAllCategories } from "@/services/category";
-import NavBottom from "./NavBottom";
 import NavMiddle from "./NavMiddle";
 import NavTop from "./NavTop";
 
@@ -8,10 +7,13 @@ export default async function Navbar() {
   const categories = categoriesRes.success ? categoriesRes.data : [];
 
   return (
-    <header className="bg-primary text-white">
-      <NavTop />
-      <NavMiddle categories={categories} />
-      <NavBottom categories={categories} />
-    </header>
+    <>
+      <div className="bg-primary text-white">
+        <NavTop />
+      </div>
+      <div className="sticky top-0 z-50 bg-primary text-white shadow-md">
+        <NavMiddle categories={categories} />
+      </div>
+    </>
   );
 }

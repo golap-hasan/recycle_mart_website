@@ -68,7 +68,7 @@ export default function NavTop() {
     : 'transition-none';
 
   return (
-    <section className="border-b border-white/15 text-white">
+    <section className="border-b border-white/15">
       {/* Mobile Top Row */}
       <div className="flex md:hidden h-10 items-center justify-end px-5 text-sm text-white gap-2">
         <Link href="/lottery">
