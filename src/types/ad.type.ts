@@ -14,6 +14,7 @@ export interface User {
 
 export interface Ad {
   id: string;
+  _id?: string;
   title: string;
   price: number;
   location: string;
@@ -21,6 +22,9 @@ export interface Ad {
   coverImage: string;
   isFeatured: boolean;
   isUrgent: boolean;
+  images?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AdDetail extends Omit<Ad, 'id' | 'postedAt' | 'coverImage'> {

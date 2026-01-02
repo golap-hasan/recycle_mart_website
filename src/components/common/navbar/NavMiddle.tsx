@@ -37,7 +37,8 @@ const NavMiddle = ({ categories }: { categories: Category[] }) => {
             alt="Recycle Mart"
             width={100}
             height={20}
-            className="h-10 md:h-20 w-auto"
+            unoptimized
+            className="h-auto w-16"
           />
         </Link>
 
