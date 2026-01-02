@@ -31,6 +31,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
           src={images[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
           fill
+          // unoptimized
           className="object-cover"
           priority
         />
