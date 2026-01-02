@@ -9,18 +9,38 @@ import { useSmartFilter } from "@/hooks/useSmartFilter";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export const LocationSelector = () => {
+interface LocationSelectorProps {
+    value?: string | null;
+    onSelect?: (location: string | null) => void;
+    className?: string;
+}
+
+export const LocationSelector = ({ value, onSelect, className }: LocationSelectorProps) => {
     const { getFilter, updateFilter } = useSmartFilter();
     const [hoveredDivision, setHoveredDivision] = useState(bdLocations[0]);
     const [isOpen, setIsOpen] = useState(false);
-    const selectedLocation = getFilter("location");
+    
+    // Use props if provided, otherwise fallback to hook
+    const selectedLocation = value !== undefined ? value : getFilter("location");
+
+    const handleSelect = (location: string | null) => {
+        if (onSelect) {
+            onSelect(location);
+        } else {
+            updateFilter("location", location);
+        }
+        setIsOpen(false);
+    };
 
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="h-10 rounded-full border-border/40 bg-background pl-4 pr-8 text-sm font-normal text-muted-foreground min-w-48 lg:w-56 justify-start relative group hover:border-primary/40 transition-all shadow-sm"
+                  className={cn(
+                    "h-10 rounded-full border-border/40 bg-background pl-4 pr-8 text-sm font-normal text-muted-foreground min-w-48 lg:w-56 justify-start relative group hover:border-primary/40 transition-all shadow-sm",
+                    className
+                  )}
                 >
                     <MapPin className="mr-2 h-4 w-4 text-primary shrink-0 transition-transform group-hover:scale-110" />
                     <span className="truncate flex-1 text-left text-foreground/80">
@@ -74,10 +94,7 @@ export const LocationSelector = () => {
                                 {hoveredDivision.districts.map((district) => (
                                     <button
                                         key={district}
-                                        onClick={() => {
-                                          updateFilter("location", district);
-                                          setIsOpen(false);
-                                        }}
+                                        onClick={() => handleSelect(district)}
                                         className={cn(
                                             "flex w-full items-center px-4 py-2.5 text-sm rounded-xl transition-all duration-200 text-left",
                                             selectedLocation === district 
@@ -104,7 +121,7 @@ export const LocationSelector = () => {
                     </p>
                     {selectedLocation && (
                       <button 
-                        onClick={() => { updateFilter("location", null); setIsOpen(false); }}
+                        onClick={() => handleSelect(null)}
                         className="text-[11px] font-bold text-primary hover:underline"
                       >
                         Clear Selection

@@ -153,7 +153,7 @@ export default function NavTop() {
             <Button
               variant="ghost"
               size="sm"
-              className="tracking-widest text-xs text-white gap-2 hover:text-yellow-300 transition-colors"
+              className="tracking-widest text-xs hover:bg-black/20 text-white gap-2 hover:text-yellow-300 transition-colors"
             >
               <Ticket />
               LOTTERY
@@ -165,7 +165,7 @@ export default function NavTop() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="tracking-widest text-xs text-white"
+                className="tracking-widest text-xs text-white! hover:bg-black/20"
               >
                 MY ACCOUNT
               </Button>
