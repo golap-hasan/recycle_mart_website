@@ -3,13 +3,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidAccessTokenForServerActions } from "@/lib/getValidAccessToken";
 import { revalidatePath } from "next/cache";
-import { FavoriteResponse } from "@/types/favorite.type";
 
 /**
  * 1. List My Favourites
  * Endpoint: GET /favourite/my
  */
-export const fetchMyFavorites = async (page = 1, limit = 10): Promise<FavoriteResponse> => {
+export const fetchMyFavorites = async (page = 1, limit = 10): Promise<any> => {
   const accessToken = await getValidAccessTokenForServerActions();
 
   try {
@@ -24,7 +23,7 @@ export const fetchMyFavorites = async (page = 1, limit = 10): Promise<FavoriteRe
     const result = await res.json();
     return result;
   } catch (error: any) {
-    return { success: false, data: [], message: error.message || "Failed to fetch favourites" };
+    return Error(error);
   }
 };
 
@@ -49,7 +48,7 @@ export const addFavorite = async (adId: string): Promise<any> => {
     }
     return result;
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to add favourite" };
+    return Error(error);
   }
 };
 
@@ -74,6 +73,6 @@ export const removeFavorite = async (adId: string): Promise<any> => {
     }
     return result;
   } catch (error: any) {
-    return { success: false, message: error.message || "Failed to remove favourite" };
+    return Error(error);
   }
 };

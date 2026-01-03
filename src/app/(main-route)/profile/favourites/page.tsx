@@ -6,17 +6,17 @@ import { Heart } from "lucide-react";
 
 import { FavoriteItem } from "@/types/favorite.type";
 
-export default async function FavouriteAdsPage(props: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const searchParams = await props.searchParams;
-  const page = Number(searchParams.page) || 1;
-  const limit = Number(searchParams.limit) || 20;
+import { PageProps } from "@/types/page.type";
+
+export default async function FavouriteAdsPage({ searchParams }: PageProps) {
+  const filter = await searchParams;
+  const page = Math.max(1, parseInt(filter.page as string) || 1);
+  const limit = Math.max(1, parseInt(filter.limit as string) || 10);
 
   const response = await fetchMyFavorites(page, limit);
-  
-  const favorites = response?.success ? (response.data as FavoriteItem[]) || [] : [];
-  const meta = response?.meta || { page, limit, total: 0, totalPage: 0 };
+
+  const favorites = (response?.success ? response.data : []) as FavoriteItem[];
+  const meta = response?.meta ?? { page, limit };
 
   return (
     <div className="space-y-6">

@@ -5,6 +5,7 @@ import PageLayout from "@/tools/PageLayout";
 import { fetchAllAds } from "@/services/ads";
 import { fetchAllCategories } from "@/services/category";
 import { Ad } from "@/types/ad.type";
+import { PageProps } from "@/types/page.type";
 
 export const metadata: Metadata = {
   title: "All Ads | Recycle Mart",
@@ -17,17 +18,15 @@ const breadcrumbs = [
   { name: "All Ads", isCurrent: true },
 ];
 
-const AllAdsPage = async (props: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
+const AllAdsPage = async ({ searchParams }: PageProps) => {
   // throw new Error("Testing our cool error page!");
-  const searchParams = await props.searchParams;
   // await new Promise((resolve) => setTimeout(resolve, 5000));
-  
+  const filter = await searchParams;
+
   // Parallel fetching
   const [categoriesRes, adsRes] = await Promise.all([
     fetchAllCategories(),
-    fetchAllAds({ ...searchParams, 'limit':'10' }),
+    fetchAllAds({ ...filter, 'limit':"10" }),
   ]);
 
   const categories = categoriesRes?.success ? categoriesRes.data : [];
