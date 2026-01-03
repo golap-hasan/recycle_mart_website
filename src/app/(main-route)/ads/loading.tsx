@@ -1,7 +1,7 @@
 "use client";
 export default function Loading() {
   return (
-    <div className="flex min-h-[70vh] w-full flex-col items-center justify-center space-y-12 py-20">
+    <div className="flex screen-height w-full flex-col items-center justify-center space-y-12 py-20">
       {/* Premium Glassmorphic Loader */}
       <div className="relative flex h-32 w-32 items-center justify-center">
         {/* Background Rotating Gradient Ring */}

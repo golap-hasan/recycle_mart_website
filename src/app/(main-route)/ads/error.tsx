@@ -18,7 +18,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
+    <div className="flex screen-height w-full flex-col items-center justify-center px-4 text-center">
       <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
         <AlertCircle className="h-10 w-10 text-red-600" />
       </div>

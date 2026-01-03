@@ -193,7 +193,7 @@ body {
   max-width: 1650px;
 }
 .screen-height {
-  min-height: calc(100vh - 5rem);
+  min-height: calc(100vh - 131px);
 }
 
 /* Scrollbar track */

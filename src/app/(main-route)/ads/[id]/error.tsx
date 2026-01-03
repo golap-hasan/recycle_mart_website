@@ -19,7 +19,7 @@ export default function Error({
 
   return (
     <PageLayout>
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 max-w-2xl mx-auto">
+      <div className="flex flex-col items-center justify-center screen-height text-center px-4 max-w-2xl mx-auto">
         <div className="mb-6 rounded-2xl bg-destructive/10 p-4">
           <AlertCircle className="h-12 w-12 text-destructive" />
         </div>

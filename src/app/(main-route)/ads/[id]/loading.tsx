@@ -4,7 +4,7 @@ import { ShoppingBag } from "lucide-react";
 
 export default function Loading() {
   return (
-    <div className="flex min-h-[75vh] w-full flex-col items-center justify-center space-y-10 py-20 px-4">
+    <div className="flex screen-height w-full flex-col items-center justify-center space-y-10 py-20 px-4">
       {/* Premium Detail Loader */}
       <div className="relative flex h-40 w-40 items-center justify-center">
         {/* Triple Expanding Rings */}

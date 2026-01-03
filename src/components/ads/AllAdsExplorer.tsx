@@ -2,10 +2,9 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ListTree, Grid3X3, List, Search, SlidersHorizontal, Globe } from 'lucide-react';
+import { ListTree, Grid3X3, List, Search, SlidersHorizontal, Globe, PackageOpen } from 'lucide-react';
 import { AdListCard } from '@/components/ads/AdListCard';
 import { AdGridCard } from '@/components/ads/AdGridCard';
 import Filters from '@/components/ads/filters';
@@ -110,53 +109,94 @@ export default function AllAdsExplorer({
           {/* Ads Content Area */}
           <div className="min-h-[500px]">
             <TabsContent value="list" className="mt-0 space-y-6">
-              <div className="grid gap-4 grid-cols-1">
-                {listings.map(listing => (
-                  <AdListCard key={listing.id} ad={listing} />
-                ))}
-              </div>
-
-              <Card className="border-border/40 bg-background/90 overflow-hidden rounded-2xl border-dashed">
-                <CardContent className="flex flex-col items-center justify-between gap-6 py-8 text-sm text-muted-foreground sm:flex-row px-8">
-                  <div className="space-y-1 text-center sm:text-left">
-                    <p className="font-bold text-foreground text-lg">Didn&apos;t find what you&apos;re looking for?</p>
-                    <p>Post your own ad and reach millions of buyers today!</p>
+              {listings.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 px-4 text-center min-h-[400px]">
+                  <div className="rounded-full bg-muted p-6 mb-6">
+                    <PackageOpen className="h-16 w-16 text-muted-foreground" />
                   </div>
-                  <Link href="/ads/create">
-                    <Button className="rounded-full bg-primary px-8 h-12 text-base font-bold text-primary-foreground hover:scale-105 transition-transform shadow-xl shadow-primary/20">
-                      Post an ad for free
+                  <h3 className="text-2xl font-bold text-foreground mb-2">No Ads Found</h3>
+                  <p className="text-muted-foreground max-w-md mb-8">
+                    We couldn't find any ads matching your criteria. Try adjusting your filters or search terms.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => window.location.href = '/ads'}
+                      className="rounded-full"
+                    >
+                      Clear All Filters
                     </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              {/* Pagination for List View */}
-              {meta && meta.totalPage > 1 && (
-                <div className="mt-8 flex justify-center">
-                  <CustomPagination
-                    currentPage={meta.page}
-                    totalPages={meta.totalPage}
-                  />
+                    <Link href="/ads/create">
+                      <Button className="rounded-full bg-primary px-8 text-base font-bold shadow-lg">
+                        Post Your Ad
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <div className="grid gap-4 grid-cols-1">
+                    {listings.map(listing => (
+                      <AdListCard key={listing.id} ad={listing} />
+                    ))}
+                  </div>
+                  {/* Pagination for List View */}
+                  {meta && meta.totalPage > 1 && (
+                    <div className="mt-8 flex justify-center">
+                      <CustomPagination
+                        currentPage={meta.page}
+                        totalPages={meta.totalPage}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </TabsContent>
 
             {/* Grid View */}
             <TabsContent value="grid" className="mt-0 space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {listings.map(listing => (
-                  <AdGridCard key={listing.id} ad={listing} />
-                ))}
-              </div>
-
-              {/* Pagination for Grid View */}
-              {meta && meta.totalPage > 1 && (
-                <div className="mt-8 flex justify-center">
-                  <CustomPagination
-                    currentPage={meta.page}
-                    totalPages={meta.totalPage}
-                  />
+              {listings.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 px-4 text-center min-h-[400px]">
+                  <div className="rounded-full bg-muted p-6 mb-6">
+                    <PackageOpen className="h-16 w-16 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">No Ads Found</h3>
+                  <p className="text-muted-foreground max-w-md mb-8">
+                    We couldn't find any ads matching your criteria. Try adjusting your filters or search terms.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => window.location.href = '/ads'}
+                      className="rounded-full"
+                    >
+                      Clear All Filters
+                    </Button>
+                    <Link href="/ads/create">
+                      <Button className="rounded-full bg-primary px-8 text-base font-bold shadow-lg">
+                        Post Your Ad
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {listings.map(listing => (
+                      <AdGridCard key={listing.id} ad={listing} />
+                    ))}
+                  </div>
+
+                  {/* Pagination for Grid View */}
+                  {meta && meta.totalPage > 1 && (
+                    <div className="mt-8 flex justify-center">
+                      <CustomPagination
+                        currentPage={meta.page}
+                        totalPages={meta.totalPage}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </TabsContent>
           </div>
