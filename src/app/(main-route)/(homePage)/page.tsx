@@ -6,7 +6,7 @@ import LatestAds from "@/components/home/LatestAds";
 
 export default function Home() {
   return (
-    <div className="space-y-4 mb-4">
+    <div className="space-y-4">
       <Hero />
       <Category />
       <FeaturedProducts />
