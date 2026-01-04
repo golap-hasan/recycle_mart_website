@@ -5,3 +5,10 @@ export const protectedRoutes = [
   '/checkout',
 ];
 
+export const DEFAULT_PAGINATION = {
+  page: 1,
+  limit: 10,
+  total: 0,
+  totalPage: 0,
+};
+

@@ -4,8 +4,11 @@ import AllAdsExplorer from "@/components/ads/AllAdsExplorer";
 import PageLayout from "@/tools/PageLayout";
 import { fetchAllAds } from "@/services/ads";
 import { fetchAllCategories } from "@/services/category";
+import { fetchMyFavorites } from "@/services/favorite";
 import { Ad } from "@/types/ad.type";
 import { PageProps } from "@/types/page.type";
+import { DEFAULT_PAGINATION } from "@/constants";
+import { FavoriteItem } from "@/types/favorite.type";
 
 export const metadata: Metadata = {
   title: "All Ads | Recycle Mart",
@@ -24,14 +27,20 @@ const AllAdsPage = async ({ searchParams }: PageProps) => {
   const filter = await searchParams;
 
   // Parallel fetching
-  const [categoriesRes, adsRes] = await Promise.all([
+  const [categoriesRes, adsRes, favoritesRes] = await Promise.all([
     fetchAllCategories(),
-    fetchAllAds({ ...filter, 'limit':"10" }),
+    fetchAllAds({ ...filter, 'limit': String(DEFAULT_PAGINATION.limit) }),
+    fetchMyFavorites(1, 100).catch(() => null), // Fetch a batch of favorites safely
   ]);
 
   const categories = categoriesRes?.success ? categoriesRes.data : [];
   const listings = (adsRes?.success ? adsRes.data : []) as Ad[];
   const meta = adsRes?.meta;
+  
+  // Extract favorite IDs
+  const favoriteIds = favoritesRes?.success 
+    ? (favoritesRes.data as FavoriteItem[]).map((fav) => fav.adId) 
+    : [];
 
   return (
     <PageLayout paddingSize="small">
@@ -41,6 +50,7 @@ const AllAdsPage = async ({ searchParams }: PageProps) => {
           listings={listings}
           categories={categories}
           meta={meta}
+          favoriteIds={favoriteIds}
         />
       </div>
     </PageLayout>

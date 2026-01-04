@@ -1,15 +1,48 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Ad } from '@/types/ad.type';
-import { timeAgo } from '@/lib/utils';
+import { cn, timeAgo } from '@/lib/utils';
+import { useState } from 'react';
+import { addFavorite, removeFavorite } from '@/services/favorite';
+import { toast } from 'sonner';
 
 interface AdGridCardProps {
   ad: Ad;
+  isFavoriteInitial?: boolean;
 }
 
-export const AdGridCard = ({ ad }: AdGridCardProps) => {
+export const AdGridCard = ({ ad, isFavoriteInitial = false }: AdGridCardProps) => {
+  const [isFavorite, setIsFavorite] = useState(isFavoriteInitial);
+  const [loading, setLoading] = useState(false);
+
+  const handleFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const apiCall = isFavorite ? removeFavorite : addFavorite;
+      const res = await apiCall(ad._id || ad.id);
+
+      if (res.success) {
+        setIsFavorite(!isFavorite);
+        toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+      } else {
+        toast.error(res.message);
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <article className="group relative overflow-hidden rounded-3xl border border-border/40 bg-background/90 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <Link href={`/ads/${ad.id}`} className="flex h-full flex-col">
@@ -35,10 +68,14 @@ export const AdGridCard = ({ ad }: AdGridCardProps) => {
           </div>
           <button
             type="button"
-            className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/40 bg-background/80 text-muted-foreground shadow-sm transition hover:text-primary z-10"
-            onClick={(e) => e.preventDefault()}
+            disabled={loading}
+            className={cn(
+              "absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/40 bg-background/80 shadow-sm transition z-10",
+              isFavorite ? "text-red-500 border-red-200 bg-red-50" : "text-muted-foreground hover:text-primary"
+            )}
+            onClick={handleFavorite}
           >
-            <Heart className="h-4 w-4" />
+            <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
           </button>
         </div>
         <div className="flex flex-1 flex-col gap-3 p-5">

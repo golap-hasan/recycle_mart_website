@@ -37,9 +37,9 @@ export const RemoveFavoriteButton = ({ adId }: { adId: string }) => {
       onClick={handleRemove}
     >
       {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin text-white" />
       ) : (
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-4 w-4 text-white" />
       )}
     </Button>
   );

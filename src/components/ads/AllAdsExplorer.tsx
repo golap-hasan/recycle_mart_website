@@ -17,14 +17,16 @@ import NoAdsComponent from './NoAdsComponent';
 
 type Props = {
   listings: Ad[];
-  categories?: Category[];
+  categories: Category[];
   meta?: AdMeta;
+  favoriteIds?: string[];
 };
 
 export default function AllAdsExplorer({
   listings,
-  categories = [],
+  categories,
   meta,
+  favoriteIds = [],
 }: Props) {
   const { getFilter, updateFilter } = useSmartFilter();
   const currentView = getFilter('view') || 'list';
@@ -115,9 +117,14 @@ export default function AllAdsExplorer({
                 <>
                   <div className="grid gap-4 grid-cols-1">
                     {listings.map(listing => (
-                      <AdListCard key={listing.id} ad={listing} />
+                      <AdListCard 
+                        key={listing.id} 
+                        ad={listing} 
+                        isFavoriteInitial={favoriteIds.includes(listing._id || listing.id)}
+                      />
                     ))}
                   </div>
+
                   {/* Pagination for List View */}
                   {meta && meta.totalPage > 1 && (
                     <div className="mt-8 flex justify-center">
@@ -139,7 +146,11 @@ export default function AllAdsExplorer({
                 <>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {listings.map(listing => (
-                      <AdGridCard key={listing.id} ad={listing} />
+                      <AdGridCard 
+                        key={listing.id} 
+                        ad={listing} 
+                        isFavoriteInitial={favoriteIds.includes(listing._id || listing.id)}
+                      />
                     ))}
                   </div>
 
