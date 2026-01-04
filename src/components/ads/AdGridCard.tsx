@@ -8,7 +8,7 @@ import { Ad } from '@/types/ad.type';
 import { cn, timeAgo } from '@/lib/utils';
 import { useState } from 'react';
 import { addFavorite, removeFavorite } from '@/services/favorite';
-import { toast } from 'sonner';
+import { SuccessToast, ErrorToast } from '@/lib/utils';
 
 interface AdGridCardProps {
   ad: Ad;
@@ -32,12 +32,12 @@ export const AdGridCard = ({ ad, isFavoriteInitial = false }: AdGridCardProps) =
 
       if (res.success) {
         setIsFavorite(!isFavorite);
-        toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+        SuccessToast(isFavorite ? "Removed from favorites" : "Added to favorites");
       } else {
-        toast.error(res.message);
+        ErrorToast(res.message);
       }
     } catch {
-      toast.error("Something went wrong");
+      ErrorToast("Something went wrong");
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
-  Heart,
-  Share2,
   Phone,
   MessageCircle,
   MapPin,
@@ -18,6 +16,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { fetchAdById } from "@/services/ads";
 import { timeAgo } from "@/lib/utils";
+import AdActions from "@/components/ads/details/AdActions";
+import { fetchMyFavorites } from "@/services/favorite";
+import { FavoriteItem } from "@/types/favorite.type";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -64,11 +65,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AdDetailsPage({ params }: Props) {
   const { id } = await params;
   const res = await fetchAdById(id);
+  const favoritesRes = await fetchMyFavorites(1, 100).catch(() => null);
 
   if (!res.success || !res.data) {
     notFound();
   }
   const ad = res.data;
+
+  const isFavorite = favoritesRes?.success 
+    ? (favoritesRes.data as FavoriteItem[]).some((fav) => fav.adId === ad._id)
+    : false;
 
   const breadcrumbs = [
     { name: "Home", href: "/" },
@@ -104,12 +110,11 @@ export default async function AdDetailsPage({ params }: Props) {
                       {ad.title}
                     </h1>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                        <Heart className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
+                      <AdActions 
+                        adId={ad._id} 
+                        title={ad.title} 
+                        initialIsFavorite={isFavorite} 
+                      />
                     </div>
                   </div>
 
