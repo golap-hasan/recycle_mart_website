@@ -26,6 +26,7 @@ import Messages from "@/components/chat/Messages";
 import Composer from "@/components/chat/Composer";
 import AdSummary from "@/components/chat/AdSummary";
 import type { Conversation, Message as Msg, AdSummary as Ad } from "@/components/chat/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const mockConversations: Conversation[] = [
   {
@@ -160,7 +161,7 @@ export default function ChatPage() {
   return (
     <>
       <div className="screen-height bg-muted/30">
-        <div className="container mx-auto px-4 py-6">
+        <div className="mx-auto px-4 py-6">
           <div className="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)_360px]">
             {/* Sidebar (desktop) */}
             <Sidebar
@@ -198,7 +199,7 @@ export default function ChatPage() {
             </Sheet>
 
             {/* Thread */}
-            <section className="rounded-xl border bg-card flex flex-col">
+            <ScrollArea className="rounded-xl border bg-card flex flex-col h-[calc(100vh-200px)]">
               <ChatHeader name={active.name} avatar={active.avatar} />
               <Separator />
 
@@ -211,7 +212,7 @@ export default function ChatPage() {
                 fileInput={fileInputRef}
                 onFileChange={onFileChange}
               />
-            </section>
+            </ScrollArea>
 
             {/* Ad summary */}
             <AdSummary ad={adSummary} />
