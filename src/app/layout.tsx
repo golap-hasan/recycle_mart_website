@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/theme/theme-provider';
 import UserProvider from '@/context/UserContext';
 import { Toaster } from 'sonner';
+import NextTopLoader from 'nextjs-toploader';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -61,6 +62,10 @@ export default function RootLayout({
         className={`${poppins.variable} antialiased max-w-[1920px] mx-auto`}
       >
         <UserProvider>
+          <NextTopLoader
+            color="#2ecc71"
+            showSpinner={false}
+          />
           <Toaster
             richColors
             //   position="top-center"

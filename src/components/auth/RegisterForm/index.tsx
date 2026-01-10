@@ -175,14 +175,14 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden bg-linear-to-br from-background via-secondary/10 to-background">
+    <div className="relative flex flex-col justify-center items-center h-screen bg-linear-to-br from-background via-secondary/10 to-background overflow-hidden">
       <div className="pointer-events-none absolute bottom-24 left-1/3 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute top-24 right-1/3 h-80 w-80 translate-x-1/2 rounded-full bg-primary/15 blur-[120px]" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl h-[95vh] sm:h-full justify-center p-4 sm:p-6 lg:p-8">
-        <Card className="relative w-full">
+      <div className="relative w-full max-w-3xl p-4 sm:p-6 lg:p-8">
+        <Card className="relative w-full max-h-[95vh] overflow-hidden">
           <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-primary/5 opacity-60" />
-          <CardContent className="relative z-10 p-3 sm:p-6 max-h-screen overflow-y-auto">
+          <CardContent className="relative z-10 p-3 sm:p-6 h-full overflow-y-auto">
             <div className="flex items-center justify-between gap-4">
               <Link href="/auth/login">
                 <Button variant="ghost" size="icon">

@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidAccessTokenForServerActions } from "@/lib/getValidAccessToken";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import { AdResponse, AdsResponse } from "@/types/ad.type";
 
 /**
@@ -14,7 +14,7 @@ export const fetchAllAds = async (query: Record<string, any> = {}): Promise<AdsR
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad?${params.toString()}`, {
       method: "GET",
-      next: { tags: ["ads"] },
+      next: { tags: ["ads"], revalidate: 300 },
     });
 
     const result = await res.json();
@@ -56,7 +56,7 @@ export const fetchMyAds = async (query: Record<string, any> = {}): Promise<AdsRe
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-      next: { tags: ["my-ads"] },
+      next: { tags: ["my-ads"], revalidate: 300 },
     });
 
     const result = await res.json();
@@ -84,8 +84,8 @@ export const createAd = async (formData: FormData): Promise<any> => {
 
     const result = await res.json();
     if (result.success) {
-      revalidatePath("/profile/my-ads");
-      revalidatePath("/ads");
+      updateTag("my-ads");
+      updateTag("ads");
     }
     return result;
   } catch (error: any) {
@@ -112,8 +112,8 @@ export const updateAd = async (adId: string, data: any): Promise<any> => {
 
     const result = await res.json();
     if (result.success) {
-      revalidatePath("/profile/my-ads");
-      revalidatePath(`/ads/${adId}`);
+      updateTag("my-ads");
+      updateTag("ads");
     }
     return result;
   } catch (error: any) {
@@ -138,7 +138,8 @@ export const deleteAd = async (adId: string): Promise<any> => {
 
     const result = await res.json();
     if (result.success) {
-      revalidatePath("/profile/my-ads");
+      updateTag("my-ads");
+      updateTag("ads");
     }
     return result;
   } catch (error: any) {
@@ -165,8 +166,8 @@ export const boostAd = async (adId: string, data: { packageId: string; days: num
 
     const result = await res.json();
     if (result.success) {
-      revalidatePath("/profile/my-ads");
-      revalidatePath("/ads");
+      updateTag("my-ads");
+      updateTag("ads");
     }
     return result;
   } catch (error: any) {
@@ -212,5 +213,62 @@ export const trackAdView = async (adId: string): Promise<any> => {
     return result;
   } catch (error: any) {
     return { success: false, message: error.message || "Failed to track ad view" };
+  }
+};
+
+/**
+ * 9. Get Latest Ads
+ * Endpoint: GET /ad/latest
+ */
+export const fetchLatestAds = async (query: Record<string, any> = {}): Promise<AdsResponse> => {
+  const params = new URLSearchParams(query);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad/latest?${params.toString()}`, {
+      method: "GET",
+      next: { tags: ["ads"], revalidate: 300 },
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return { success: false, data: [], message: error.message || "Failed to fetch latest ads" };
+  }
+};
+
+/**
+ * 10. Get Top Ads
+ * Endpoint: GET /ad/top
+ */
+export const fetchTopAds = async (query: Record<string, any> = {}): Promise<AdsResponse> => {
+   const params = new URLSearchParams(query);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad/top?${params.toString()}`, {
+      method: "GET",
+      next: { tags: ["ads"], revalidate: 300 },
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return { success: false, data: [], message: error.message || "Failed to fetch top ads" };
+  }
+};
+
+/**
+ * 11. Get Featured Ads
+ * Endpoint: GET /ad/featured
+ */
+export const fetchFeaturedAds = async (query: Record<string, any> = {}): Promise<AdsResponse> => {
+  const params = new URLSearchParams(query);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/ad/featured?${params.toString()}`, {
+      method: "GET",
+      next: { tags: ["ads"], revalidate: 300 },
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return { success: false, data: [], message: error.message || "Failed to fetch featured ads" };
   }
 };

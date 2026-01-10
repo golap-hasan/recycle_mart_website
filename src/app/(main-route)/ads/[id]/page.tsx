@@ -10,7 +10,7 @@ import {
 import CustomBreadcrumb from "@/tools/CustomBreadcrumb";
 import PageLayout from "@/tools/PageLayout";
 import SellerInfo from "@/components/ads/details/SellerInfo";
-import RelatedAds from "@/components/ads/details/RelatedAds";
+// import RelatedAds from "@/components/ads/details/RelatedAds";
 import ImageGallery from "@/components/ads/details/ImageGallery";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -215,14 +215,14 @@ export default async function AdDetailsPage({ params }: Props) {
         </div>
 
         {/* Related Ads */}
-        {ad.categoryId && (
+        {/* {ad.categoryId && (
           <div className="mt-8">
             <RelatedAds 
               currentAdId={ad._id} 
               category={ad.categoryId.name} 
             />
           </div>
-        )}
+        )} */}
       </div>
     </PageLayout>
   );

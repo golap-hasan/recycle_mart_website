@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, ShieldCheck } from "lucide-react";
+// import { ArrowRight, Sparkles, Zap, ShieldCheck } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -70,8 +70,8 @@ const Hero = () => {
   }, [carouselApi, startAutoplay, stopAutoplay]);
 
   return (
-    <section className="relative py-6">
-      <div className="grid gap-6 lg:grid-cols-[1fr_300px] h-[500px] lg:h-[600px]">
+    <section className="relative">
+      <div className="h-[500px] lg:h-[calc(100vh-131px)]">
         {/* Main Carousel */}
         <div className="relative overflow-hidden">
           <Carousel
@@ -85,7 +85,7 @@ const Hero = () => {
             <CarouselContent className="ml-0">
               {heroSlides.map((slide) => (
                 <CarouselItem key={slide.id} className="pl-0 h-full relative group">
-                  <Link href={slide.href} className="block h-[600px] w-full relative">
+                  <Link href={slide.href} className="block h-[500px] lg:h-[calc(100vh-131px)] w-full relative">
                     <Image
                       src={slide.imageSrc}
                       alt={slide.href}
@@ -101,7 +101,7 @@ const Hero = () => {
         </div>
 
         {/* Side Banners */}
-        <div className="hidden lg:flex flex-col gap-6 h-full">
+        {/* <div className="hidden lg:flex flex-col gap-6 h-full">
           <Link href="/ads?verified=true" className="relative flex-1 overflow-hidden bg-orange-50 group">
             <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
               <div>
@@ -167,7 +167,7 @@ const Hero = () => {
               className="object-cover opacity-10 group-hover:opacity-20 transition-opacity"
             />
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   );

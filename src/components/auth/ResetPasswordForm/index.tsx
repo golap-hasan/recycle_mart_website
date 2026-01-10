@@ -20,7 +20,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { ErrorToast, SuccessToast } from '@/lib/utils';
 import { setNewPassword } from '@/services/Auth';
-// import { useResetPasswordMutation } from "@/redux/feature/auth/authApi";
 
 const resetPasswordSchema = z
   .object({
@@ -48,8 +47,6 @@ const ResetPasswordForm = () => {
     setShowNewPassword(previous => !previous);
   const toggleConfirmNewPasswordVisibility = () =>
     setShowConfirmNewPassword(previous => !previous);
-
-  // const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),

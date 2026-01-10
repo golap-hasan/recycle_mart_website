@@ -32,7 +32,7 @@ const ListingCard = ({
       href={`/ads/${id || 'item'}`}
       className="group rounded-md border bg-card shadow-sm overflow-hidden relative"
     >
-      <div className="aspect-4/3 relative">
+      <div className="aspect-6/5 relative">
         <Image
           src={imageUrl || "/placeholder.png"}
           alt={title}

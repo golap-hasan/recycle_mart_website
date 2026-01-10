@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidAccessTokenForServerActions } from "@/lib/getValidAccessToken";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 
 /**
  * 1. List My Favourites
@@ -17,10 +17,10 @@ export const fetchMyFavorites = async (page = 1, limit = 10): Promise<any> => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-      next: { tags: ["favourites"] },
+      next: { tags: ["favourites"], revalidate: 300 },
     });
 
-    const result = await res.json();
+    const result = await res.json()
     return result;
   } catch (error: any) {
     return Error(error);
@@ -44,7 +44,7 @@ export const addFavorite = async (adId: string): Promise<any> => {
 
     const result = await res.json();
     if (result.success) {
-      revalidatePath("/profile/favourites");
+      updateTag("favourites");
     }
     return result;
   } catch (error: any) {
@@ -69,7 +69,7 @@ export const removeFavorite = async (adId: string): Promise<any> => {
 
     const result = await res.json();
     if (result.success) {
-      revalidatePath("/profile/favourites");
+      updateTag("favourites");
     }
     return result;
   } catch (error: any) {
