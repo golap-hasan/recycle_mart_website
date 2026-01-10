@@ -25,7 +25,7 @@ const infoColumns = [
   {
     title: "Help & Support",
     links: [
-      { label: "FAQs", href: "/help" },
+      { label: "FAQs", href: "/faq" },
       { label: "Stay Safe", href: "/safety" },
       { label: "Contact Us", href: "/contact" },
     ],

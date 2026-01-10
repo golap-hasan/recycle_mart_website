@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
 // import loginAnimation from '../../../../public/lottie/login.json';
 import loginAnimation from '@/assets/lottie/login.json';
 import { signInUser } from '@/services/Auth';
@@ -35,8 +35,9 @@ const loginSchema = z.object({
 
 const LoginForm = ({ redirectPath }: { redirectPath: string }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const { setIsLoading } = useUser();
+  const { setIsLoading: setIsLoadingContext } = useUser();
   const router = useRouter();
 
   const form = useForm({
@@ -54,11 +55,13 @@ const LoginForm = ({ redirectPath }: { redirectPath: string }) => {
     };
 
     try {
+      setIsLoading(true);
       const res = await signInUser(payload);
 
       if (res?.success) {
         SuccessToast(res?.message || 'Login successful');
         setIsLoading(true);
+        setIsLoadingContext(true);
         // router.refresh();
         // router.push('/');
         router.push(redirectPath || '/');
@@ -79,6 +82,8 @@ const LoginForm = ({ redirectPath }: { redirectPath: string }) => {
       }
     } catch (err: unknown) {
       ErrorToast(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -204,7 +209,7 @@ const LoginForm = ({ redirectPath }: { redirectPath: string }) => {
                     type="submit"
                     className="w-full rounded-full py-5 text-sm font-semibold uppercase tracking-[0.35em]"
                   >
-                    Login
+                   {isLoading ? <><Loader2 className="size-5 animate-spin" /> Logging in...</> : 'Login'}
                   </Button>
                 </form>
               </Form>
