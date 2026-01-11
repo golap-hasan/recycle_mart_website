@@ -38,7 +38,7 @@ const Category = async () => {
         </div>
 
         <div className="relative space-y-10">
-          <div className="mx-auto grid container gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <div className="mx-auto grid container gap-4 sm:grid-cols-2 md:grid-cols-3">
             {categories.map((category, index) => (
               <Link
                 key={category._id}
@@ -52,14 +52,14 @@ const Category = async () => {
                   )}
                 />
                 <div className="relative z-10 flex items-start gap-4">
-                  <span className="inline-flex size-12 items-center justify-center rounded-xl border border-border/40 bg-background/80 dark:bg-white text-primary shadow-sm transition group-hover:border-primary/40 group-hover:scale-110">
+                  <span className="inline-flex size-16 items-center justify-center rounded-xl border border-border/40 bg-background/80 text-primary shadow-sm transition group-hover:border-primary/40 group-hover:scale-110">
                     {category.icon && (
-                      <div className="relative w-7 h-7">
+                      <div className="relative w-10 h-10">
                         <Image 
                           src={category.icon} 
                           alt={category.name} 
                           fill 
-                          className="object-contain"
+                          className="object-contain dark:invert"
                         />
                       </div>
                     )}

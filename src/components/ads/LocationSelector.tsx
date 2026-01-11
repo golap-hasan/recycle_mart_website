@@ -42,7 +42,7 @@ export const LocationSelector = ({ value, onSelect, className }: LocationSelecto
                     className
                   )}
                 >
-                    <MapPin className="mr-2 h-4 w-4 text-primary shrink-0 transition-transform group-hover:scale-110" />
+                    <MapPin className="shrink-0 transition-transform group-hover:scale-110" />
                     <span className="truncate flex-1 text-left text-foreground/80">
                       {selectedLocation || "Select Location"}
                     </span>

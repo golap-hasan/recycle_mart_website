@@ -56,7 +56,7 @@ const NavMiddle = ({ categories }: { categories: Category[] }) => {
                 <span>Categories</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-[800px] border-white/20 bg-primary/95 p-6 text-white rounded-3xl backdrop-blur-md z-50">
+            <PopoverContent align="start" className="w-[800px] border-white/20 bg-primary/95 dark:bg-teal-950 p-6 text-white rounded-3xl backdrop-blur-md z-50">
               <ScrollArea className="h-fit max-h-[70vh]">
                 <div className="grid grid-cols-4 gap-4">
                   {categories.map((category) => (
@@ -64,14 +64,14 @@ const NavMiddle = ({ categories }: { categories: Category[] }) => {
                       key={category._id}
                       href={`/ads?category=${category.slug}`}
                       onClick={() => setIsPopoverOpen(false)}
-                      className="group flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-white/5 transition hover:border-white/30 hover:bg-white/15 text-center"
+                      className="group flex flex-col items-center justify-center p-4 rounded-2xl border border-white/10 bg-white/10 transition hover:border-white/30 hover:bg-white/15 text-center"
                     >
                       {category.icon && (
                         <div className="relative w-10 h-10 mb-2 transition-transform group-hover:scale-110">
-                          <Image src={category.icon} alt={category.name} fill className="object-contain" />
+                          <Image src={category.icon} alt={category.name} fill className="object-contain invert" />
                         </div>
                       )}
-                      <span className="text-[10px] font-bold uppercase tracking-wider">
+                      <span className="text-xs font-bold uppercase tracking-wider">
                         {category.name}
                       </span>
                     </Link>

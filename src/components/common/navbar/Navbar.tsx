@@ -8,10 +8,10 @@ export default async function Navbar() {
 
   return (
     <>
-      <div className="bg-primary text-white">
+      <div className="bg-primary dark:bg-teal-950 text-white">
         <NavTop />
       </div>
-      <div className="sticky top-0 z-50 bg-primary text-white shadow-md">
+      <div className="sticky top-0 z-50 bg-primary dark:bg-teal-950 text-white shadow-md">
         <NavMiddle categories={categories} />
       </div>
     </>

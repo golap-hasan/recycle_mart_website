@@ -193,11 +193,11 @@ export default function CreateAdForm({ categories }: { categories: Category[] })
                                 </FormControl>
                                 <FormLabel className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all hover:bg-accent/50 ${field.value === cat._id ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"}`}>
                                   {cat.icon && (
-                                    <div className="relative w-10 h-10 mb-2">
-                                      <Image src={cat.icon} alt={cat.name} fill className="object-contain dark:bg-white/90 rounded-lg p-1" />
+                                    <div className="relative w-14 h-14 mb-2">
+                                      <Image src={cat.icon} alt={cat.name} fill className="object-contain invert rounded-lg p-1" />
                                     </div>
                                   )}
-                                  <span className="text-[10px] uppercase font-bold text-center leading-tight">{cat.name}</span>
+                                  <span className="text-xs uppercase font-bold text-center leading-tight">{cat.name}</span>
                                 </FormLabel>
                               </FormItem>
                             ))}
