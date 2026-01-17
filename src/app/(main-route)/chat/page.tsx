@@ -57,6 +57,8 @@ type ConversationListItem = {
 
 type MessagePayload = {
   _id: string;
+  conversation?: string;
+  conversationId?: string;
   sender: string;
   text?: string | null;
   attachment?: {
@@ -104,6 +106,7 @@ const buildMessages = (
         hour: '2-digit',
         minute: '2-digit',
       }),
+      createdAt: msg.createdAt,
     }));
 };
 
@@ -116,6 +119,56 @@ const mergeUniqueMessages = (prev: UIMessage[], incoming: UIMessage[]) => {
     seen.add(m.id);
     next.push(m);
   }
+  return next;
+};
+
+const getConversationIdFromMessage = (msg: MessagePayload) => {
+  return msg.conversationId ?? msg.conversation ?? null;
+};
+
+const getPreviewTextFromMessage = (msg: MessagePayload) => {
+  const text = typeof msg.text === 'string' ? msg.text.trim() : '';
+  if (text) return text;
+  if (msg.attachment) return '[Attachment]';
+  return '';
+};
+
+const updateConversationPreview = (
+  prev: ConversationListItem[],
+  opts: {
+    conversationId: string;
+    msg: MessagePayload;
+    activeId: string | null;
+    myId: string;
+  },
+) => {
+  const { conversationId, msg, activeId, myId } = opts;
+  const lastMessageText = getPreviewTextFromMessage(msg);
+  const lastMessageAt = msg.createdAt;
+  const isFromMe = String(msg.sender) === String(myId);
+  const isActive = String(activeId) === String(conversationId);
+
+  const next = prev.map(c => {
+    if (String(c.id) !== String(conversationId)) return c;
+
+    const unreadCount = isFromMe || isActive ? 0 : (c.unreadCount ?? 0) + 1;
+
+    return {
+      ...c,
+      lastMessage: lastMessageText,
+      lastTime: lastMessageAt,
+      unreadCount,
+    };
+  });
+
+  next.sort((a, b) => {
+    const aTime = new Date(a.lastTime as unknown as string).getTime();
+    const bTime = new Date(b.lastTime as unknown as string).getTime();
+    return (
+      (Number.isNaN(bTime) ? 0 : bTime) - (Number.isNaN(aTime) ? 0 : aTime)
+    );
+  });
+
   return next;
 };
 
@@ -156,24 +209,26 @@ export default function ChatPage() {
     [],
   );
   const [activeId, setActiveId] = useState<string | null>(null);
+  const activeIdRef = useRef<string | null>(null);
   const [messages, setMessages] = useState<UIMessage[]>([]);
   const [input, setInput] = useState('');
   const [query, setQuery] = useState('');
   const [adSummary, setAdSummary] = useState<UIAdSummary | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pendingImageFile = useRef<File | null>(null);
-  const endRef = useRef<HTMLDivElement | null>(null);
   const handledUpsertRef = useRef(false);
+  const endRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    activeIdRef.current = activeId;
+  }, [activeId]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewOpen, setPreviewOpen] = useState(false);
-
-  // auto-scroll disabled
 
   const loadConversations = useCallback(
     (sock: Socket) => {
@@ -241,6 +296,19 @@ export default function ChatPage() {
 
         sock.on('chat:message:new', (msg: MessagePayload) => {
           if (!myId) return;
+
+          const conversationId = getConversationIdFromMessage(msg);
+          if (conversationId) {
+            setConversations(prev =>
+              updateConversationPreview(prev, {
+                conversationId,
+                msg,
+                activeId: activeIdRef.current,
+                myId,
+              }),
+            );
+          }
+
           setMessages(prev =>
             mergeUniqueMessages(prev, buildMessages([msg], myId)),
           );
@@ -349,6 +417,19 @@ export default function ChatPage() {
           return;
         }
 
+        const conversationId =
+          getConversationIdFromMessage(created) ?? activeId;
+        if (conversationId) {
+          setConversations(prev =>
+            updateConversationPreview(prev, {
+              conversationId,
+              msg: created,
+              activeId,
+              myId: myId ?? '',
+            }),
+          );
+        }
+
         if (myId) {
           setMessages(prev =>
             mergeUniqueMessages(prev, buildMessages([created], myId)),
@@ -454,6 +535,19 @@ export default function ChatPage() {
         if (!ack.success || !created) {
           toast.error(ack.message || 'ছবি পাঠানো যায়নি');
           return;
+        }
+
+        const conversationId =
+          getConversationIdFromMessage(created) ?? activeId;
+        if (conversationId) {
+          setConversations(prev =>
+            updateConversationPreview(prev, {
+              conversationId,
+              msg: created,
+              activeId,
+              myId: myId ?? '',
+            }),
+          );
         }
 
         if (myId) {

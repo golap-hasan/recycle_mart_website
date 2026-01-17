@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Image as ImageIcon, Paperclip, Smile, Send } from 'lucide-react';
+import { Image as ImageIcon, Smile, Send } from 'lucide-react';
 
 type Props = {
   input: string;
@@ -26,14 +26,14 @@ export default function Composer({
   return (
     <div className="border-t p-2">
       <div className="flex items-end gap-2">
-        <Button
+        {/* <Button
           variant="outline"
           size="icon"
           className="h-9 w-9"
           disabled={disabled}
         >
           <Paperclip className="h-4 w-4" />
-        </Button>
+        </Button> */}
         <Button
           variant="outline"
           size="icon"
@@ -58,7 +58,7 @@ export default function Composer({
             }}
             disabled={disabled}
           />
-          <Button
+          {/* <Button
             aria-label="emoji"
             variant="ghost"
             size="icon"
@@ -66,7 +66,7 @@ export default function Composer({
             disabled={disabled}
           >
             <Smile className="h-4 w-4" />
-          </Button>
+          </Button> */}
         </div>
         <Button
           onClick={onSend}
