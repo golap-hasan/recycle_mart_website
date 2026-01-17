@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -18,6 +19,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -88,7 +90,7 @@ const formatDateTimeLabel = (value?: string | Date | null) => {
 
 const buildMessages = (
   messages: MessagePayload[],
-  myId: string
+  myId: string,
 ): UIMessage[] => {
   return messages
     .slice()
@@ -129,7 +131,7 @@ async function ensureSocket(): Promise<Socket | null> {
     return null;
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SOCKET_BASE;
+  const baseUrl = process.env.NEXT_PUBLIC_SOCKET_API;
 
   socketInstance = io(`${baseUrl}${SOCKET_NAMESPACE}`, {
     transports: ['websocket'],
@@ -151,7 +153,7 @@ export default function ChatPage() {
   const [uploading, setUploading] = useState(false);
 
   const [conversations, setConversations] = useState<ConversationListItem[]>(
-    []
+    [],
   );
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<UIMessage[]>([]);
@@ -189,10 +191,10 @@ export default function ChatPage() {
           if (!activeId && sorted.length) {
             setActiveId(String(sorted[0].id));
           }
-        }
+        },
       );
     },
-    [activeId]
+    [activeId],
   );
 
   const listMessages = useCallback(
@@ -209,7 +211,7 @@ export default function ChatPage() {
           }
 
           setMessages(buildMessages(ack.data ?? [], myId));
-        }
+        },
       );
 
       sock.emit(
@@ -219,10 +221,10 @@ export default function ChatPage() {
           if (!ack.success) {
             toast.error(ack.message || 'Failed to join conversation');
           }
-        }
+        },
       );
     },
-    [myId]
+    [myId],
   );
 
   useEffect(() => {
@@ -240,7 +242,7 @@ export default function ChatPage() {
         sock.on('chat:message:new', (msg: MessagePayload) => {
           if (!myId) return;
           setMessages(prev =>
-            mergeUniqueMessages(prev, buildMessages([msg], myId))
+            mergeUniqueMessages(prev, buildMessages([msg], myId)),
           );
         });
 
@@ -279,7 +281,7 @@ export default function ChatPage() {
     if (!socket || !activeId) return;
 
     const activeConversation = conversations.find(
-      c => String(c.id) === String(activeId)
+      c => String(c.id) === String(activeId),
     );
     setAdSummary(activeConversation?.adSummary ?? null);
 
@@ -316,14 +318,14 @@ export default function ChatPage() {
         }
 
         router.replace('/chat', { scroll: false });
-      }
+      },
     );
   }, [loadConversations, myId, router, searchParams, socket]);
 
   const filteredConversations = useMemo(() => {
     if (!query) return conversations;
     return conversations.filter(c =>
-      c.name.toLowerCase().includes(query.toLowerCase())
+      c.name.toLowerCase().includes(query.toLowerCase()),
     );
   }, [conversations, query]);
 
@@ -349,11 +351,11 @@ export default function ChatPage() {
 
         if (myId) {
           setMessages(prev =>
-            mergeUniqueMessages(prev, buildMessages([created], myId))
+            mergeUniqueMessages(prev, buildMessages([created], myId)),
           );
         }
         setInput('');
-      }
+      },
     );
   }, [activeId, input, myId, socket]);
 
@@ -400,7 +402,7 @@ export default function ChatPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const json = await res.json();
@@ -456,10 +458,10 @@ export default function ChatPage() {
 
         if (myId) {
           setMessages(prev =>
-            mergeUniqueMessages(prev, buildMessages([created], myId))
+            mergeUniqueMessages(prev, buildMessages([created], myId)),
           );
         }
-      }
+      },
     );
   };
 
@@ -529,6 +531,9 @@ export default function ChatPage() {
               <SheetContent side="left" className="w-[90vw] p-0 sm:w-96">
                 <SheetHeader className="p-4">
                   <SheetTitle>Chats</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Select a conversation from the list.
+                  </SheetDescription>
                 </SheetHeader>
                 <Sidebar
                   className="rounded-none"
@@ -555,7 +560,7 @@ export default function ChatPage() {
               <ChatHeader
                 name={activeConversationMeta.name}
                 avatar={activeConversationMeta.avatar}
-                status="Active now"
+                // status="Active now"
               />
               <Separator />
               <Messages thread={messages} endRef={endRef} />
@@ -579,6 +584,9 @@ export default function ChatPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>ছবি পাঠাবেন?</DialogTitle>
+            <DialogDescription className="sr-only">
+              Preview the selected image before sending.
+            </DialogDescription>
           </DialogHeader>
           {previewUrl ? (
             <div className="relative aspect-4/3 w-full overflow-hidden rounded-md">

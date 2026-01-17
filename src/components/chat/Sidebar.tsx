@@ -14,6 +14,15 @@ type Props = {
   className?: string;
 };
 
+const formatLastTime = (value?: string | Date | null) => {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  return '';
+};
+
 export default function Sidebar({
   conversations,
   activeId,
@@ -52,7 +61,7 @@ export default function Sidebar({
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate font-medium">{c.name}</span>
                 <span className="text-xs text-muted-foreground">
-                  {c?.lastTime}
+                  {formatLastTime(c.lastTime)}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">

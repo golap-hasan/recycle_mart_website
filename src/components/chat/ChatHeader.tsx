@@ -5,10 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 type Props = {
   name: string;
   avatar?: string | null;
-  status?: string;
+  // status?: string;
 };
 
-export default function ChatHeader({ name, avatar, status = 'Online' }: Props) {
+export default function ChatHeader({
+  name,
+  avatar,
+}: // status = 'Online'
+Props) {
   const fallback = name.slice(0, 1).toUpperCase();
 
   return (
@@ -20,7 +24,7 @@ export default function ChatHeader({ name, avatar, status = 'Online' }: Props) {
         </Avatar>
         <div>
           <div className="font-medium">{name}</div>
-          <div className="text-xs text-emerald-600">{status}</div>
+          {/* <div className="text-xs text-emerald-600">{status}</div> */}
         </div>
       </div>
     </div>

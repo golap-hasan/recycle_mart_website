@@ -30,6 +30,8 @@ export default function AdSummary({ ad }: Props) {
             alt={title ?? 'Ad image'}
             fill
             className="object-cover"
+            loading="eager"
+            priority
             unoptimized
           />
         ) : (
