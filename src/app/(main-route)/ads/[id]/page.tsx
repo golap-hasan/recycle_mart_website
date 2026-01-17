@@ -1,24 +1,18 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import {
-  Phone,
-  MessageCircle,
-  MapPin,
-  Calendar,
-  Eye,
-} from "lucide-react";
-import CustomBreadcrumb from "@/tools/CustomBreadcrumb";
-import PageLayout from "@/tools/PageLayout";
-import SellerInfo from "@/components/ads/details/SellerInfo";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Phone, MapPin, Calendar, Eye } from 'lucide-react';
+import CustomBreadcrumb from '@/tools/CustomBreadcrumb';
+import PageLayout from '@/tools/PageLayout';
+import SellerInfo from '@/components/ads/details/SellerInfo';
 // import RelatedAds from "@/components/ads/details/RelatedAds";
-import ImageGallery from "@/components/ads/details/ImageGallery";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { fetchAdById } from "@/services/ads";
-import { timeAgo } from "@/lib/utils";
-import AdActions from "@/components/ads/details/AdActions";
-import { fetchMyFavorites } from "@/services/favorite";
-import { FavoriteItem } from "@/types/favorite.type";
+import ImageGallery from '@/components/ads/details/ImageGallery';
+import { Button } from '@/components/ui/button';
+import { fetchAdById } from '@/services/ads';
+import { timeAgo } from '@/lib/utils';
+import AdActions from '@/components/ads/details/AdActions';
+import { fetchMyFavorites } from '@/services/favorite';
+import { FavoriteItem } from '@/types/favorite.type';
+import { MessageSellerButton } from '@/components/ads/details/MessageSellerButton';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -31,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!res.success || !res.data) {
     return {
-      title: "Ad Not Found | Recycle Mart",
+      title: 'Ad Not Found | Recycle Mart',
     };
   }
 
@@ -41,20 +35,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${ad.title} | Recycle Mart`,
     description: ad.description.slice(0, 160),
     keywords: [
-      ad.categoryId?.name || "Ads",
+      ad.categoryId?.name || 'Ads',
       ad.location,
-      "Bangladesh",
-      "buy",
-      "sell",
+      'Bangladesh',
+      'buy',
+      'sell',
     ],
     openGraph: {
       title: ad.title,
       description: ad.description.slice(0, 160),
       images: [ad.images[0]],
-      type: "website",
+      type: 'website',
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: ad.title,
       description: ad.description.slice(0, 160),
       images: [ad.images[0]],
@@ -72,19 +66,22 @@ export default async function AdDetailsPage({ params }: Props) {
   }
   const ad = res.data;
 
-  const isFavorite = favoritesRes?.success 
-    ? (favoritesRes.data as FavoriteItem[]).some((fav) => fav.adId === ad._id)
+  const isFavorite = favoritesRes?.success
+    ? (favoritesRes.data as FavoriteItem[]).some(fav => fav.adId === ad._id)
     : false;
 
   const breadcrumbs = [
-    { name: "Home", href: "/" },
-    { name: "Ads", href: "/ads" },
+    { name: 'Home', href: '/' },
+    { name: 'Ads', href: '/ads' },
     {
-      name: ad.categoryId?.name || "Category",
-      href: ad.categoryId ? `/ads?category=${ad.categoryId.slug}` : "/ads",
+      name: ad.categoryId?.name || 'Category',
+      href: ad.categoryId ? `/ads?category=${ad.categoryId.slug}` : '/ads',
     },
     {
-      name: ad.title?.length > 50 ? ad.title.slice(0, 50) + "..." : ad.title || "Ad Details",
+      name:
+        ad.title?.length > 50
+          ? ad.title.slice(0, 50) + '...'
+          : ad.title || 'Ad Details',
       isCurrent: true,
     },
   ];
@@ -93,7 +90,7 @@ export default async function AdDetailsPage({ params }: Props) {
     <PageLayout paddingSize="small">
       <div className="container mx-auto">
         <CustomBreadcrumb links={breadcrumbs} />
-        
+
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-8">
@@ -110,10 +107,10 @@ export default async function AdDetailsPage({ params }: Props) {
                       {ad.title}
                     </h1>
                     <div className="flex items-center gap-2">
-                      <AdActions 
-                        adId={ad._id} 
-                        title={ad.title} 
-                        initialIsFavorite={isFavorite} 
+                      <AdActions
+                        adId={ad._id}
+                        title={ad.title}
+                        initialIsFavorite={isFavorite}
                       />
                     </div>
                   </div>
@@ -185,16 +182,15 @@ export default async function AdDetailsPage({ params }: Props) {
               <div className="flex flex-col gap-2">
                 <a href={`tel:${ad.contactPhone}`}>
                   <Button className="w-full h-11 font-semibold gap-2">
-                    <Phone/>
+                    <Phone />
                     Call {ad.contactPhone}
                   </Button>
                 </a>
-                <Link href={`/chat`}>
-                  <Button variant="outline" className="w-full h-11 gap-2">
-                    <MessageCircle/>
-                    Send Message
-                  </Button>
-                </Link>
+                <MessageSellerButton
+                  adId={ad?._id ?? ''}
+                  sellerId={ad?.user?._id ?? ''}
+                  className="w-full h-11 gap-2"
+                />
               </div>
             </div>
 

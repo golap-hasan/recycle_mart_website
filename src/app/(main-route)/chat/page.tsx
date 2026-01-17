@@ -1,194 +1,547 @@
-"use client";
+'use client';
 
-import { useMemo, useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import { MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
+import { io, Socket } from 'socket.io-client';
+import { toast } from 'sonner';
+import { MessageCircle, UploadCloud } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import Sidebar from "@/components/chat/Sidebar";
-import ChatHeader from "@/components/chat/ChatHeader";
-import Messages from "@/components/chat/Messages";
-import Composer from "@/components/chat/Composer";
-import AdSummary from "@/components/chat/AdSummary";
-import type { Conversation, Message as Msg, AdSummary as Ad } from "@/components/chat/types";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/dialog';
+import Sidebar from '@/components/chat/Sidebar';
+import ChatHeader from '@/components/chat/ChatHeader';
+import Messages from '@/components/chat/Messages';
+import Composer from '@/components/chat/Composer';
+import AdSummaryPanel from '@/components/chat/AdSummary';
+import type {
+  Conversation as UIConversation,
+  Message as UIMessage,
+  AdSummary as UIAdSummary,
+} from '@/components/chat/types';
+import { getAccessTokenFromCookies } from '@/lib/authClient';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const mockConversations: Conversation[] = [
-  {
-    id: "c1",
-    name: "Rahim Electronics",
-    avatar:
-      "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg",
-    lastMessage: "Ok, final price naki?",
-    lastTime: "10:21",
-    unread: 2,
-  },
-  {
-    id: "c2",
-    name: "Jannat Realty",
-    avatar:
-      "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg",
-    lastMessage: "Kal dekhte ashben?",
-    lastTime: "09:12",
-  },
-  {
-    id: "c3",
-    name: "Bike Hub BD",
-    avatar:
-      "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-    lastMessage: "Registration ache",
-    lastTime: "Yesterday",
-  },
-];
-
-const mockThread: Msg[] = [
-  { id: "m1", fromMe: false, text: "Assalamu Alaikum, available?", time: "10:05" },
-  {
-    id: "m2",
-    fromMe: true,
-    text: "Walikum Salam, yes available. Cash on delivery possible.",
-    time: "10:06",
-  },
-  {
-    id: "m3",
-    fromMe: false,
-    text: "Final price koto diben?",
-    time: "10:10",
-  },
-  {
-    id: "m4",
-    fromMe: true,
-    text: "Price slightly negotiable. Apni koto bolchen?",
-    time: "10:15",
-  },
-  {
-    id: "m5",
-    fromMe: false,
-    image: "https://images.pexels.com/photos/6078123/pexels-photo-6078123.jpeg",
-    time: "10:20",
-  },
-  { id: "m6", fromMe: false, text: "Etai to?", time: "10:20" },
-  { id: "m7", fromMe: true, text: "Yes, exact model.", time: "10:21" },
-];
-
-const adSummary: Ad = {
-  title: "Refurbished iPhone 13 (128GB)",
-  price: "৳ 58,500",
-  image: "https://images.pexels.com/photos/6078123/pexels-photo-6078123.jpeg",
-  location: "Dhaka, Bangladesh",
-  posted: "2 hours ago",
-  link: "/ads/electronics/iphone-13",
+type SocketAck<T> = {
+  success: boolean;
+  message: string;
+  data?: T;
+  errorSources?: { path: string; message: string }[];
+  meta?: unknown;
 };
 
-export default function ChatPage() {
-  const [query, setQuery] = useState("");
-  const [activeId, setActiveId] = useState<string>(mockConversations[0].id);
-  const [input, setInput] = useState("");
-  const [thread, setThread] = useState<Msg[]>(mockThread);
-  const endRef = useRef<HTMLDivElement | null>(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+type ConversationListItem = {
+  id: string;
+  name: string;
+  avatar: string | null;
+  lastMessage: string | null;
+  lastTime: string;
+  unreadCount: number;
+  adSummary: UIAdSummary | null;
+};
 
-  const filtered = useMemo(() => {
-    if (!query) return mockConversations;
-    return mockConversations.filter((c) =>
-      c.name.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [query]);
+type MessagePayload = {
+  _id: string;
+  sender: string;
+  text?: string | null;
+  attachment?: {
+    type: 'image' | 'file';
+    url: string;
+    name?: string;
+    size?: number;
+  } | null;
+  createdAt: string;
+};
+
+const SOCKET_NAMESPACE = '/chat';
+
+const ensureDate = (value?: string | Date | null) => {
+  if (!value) return null;
+  const date = typeof value === 'string' ? new Date(value) : value;
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const formatTimeLabel = (value?: string | Date | null) => {
+  const date = ensureDate(value);
+  if (!date) return '';
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
+const formatDateTimeLabel = (value?: string | Date | null) => {
+  const date = ensureDate(value);
+  if (!date) return '';
+  return date.toLocaleString();
+};
+
+const buildMessages = (
+  messages: MessagePayload[],
+  myId: string
+): UIMessage[] => {
+  return messages
+    .slice()
+    .reverse()
+    .map(msg => ({
+      id: msg._id,
+      fromMe: msg.sender === myId,
+      text: msg.text || undefined,
+      image: msg.attachment?.type === 'image' ? msg.attachment.url : undefined,
+      time: new Date(msg.createdAt).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    }));
+};
+
+const mergeUniqueMessages = (prev: UIMessage[], incoming: UIMessage[]) => {
+  if (!incoming.length) return prev;
+  const seen = new Set(prev.map(m => m.id));
+  const next = [...prev];
+  for (const m of incoming) {
+    if (seen.has(m.id)) continue;
+    seen.add(m.id);
+    next.push(m);
+  }
+  return next;
+};
+
+let socketInstance: Socket | null = null;
+
+async function ensureSocket(): Promise<Socket | null> {
+  if (socketInstance) return socketInstance;
+
+  const token = getAccessTokenFromCookies();
+
+  if (!token) {
+    toast.error('আপনি লগইন করেননি। চ্যাট ব্যবহার করতে অনুগ্রহ করে লগইন করুন।');
+    return null;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_SOCKET_BASE;
+
+  socketInstance = io(`${baseUrl}${SOCKET_NAMESPACE}`, {
+    transports: ['websocket'],
+    auth: { token },
+  });
+
+  socketInstance.on('connect_error', (err: Error) => {
+    toast.error(err.message || 'Socket connection failed');
+  });
+
+  return socketInstance;
+}
+
+export default function ChatPage() {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [myId, setMyId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const [conversations, setConversations] = useState<ConversationListItem[]>(
+    []
+  );
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<UIMessage[]>([]);
+  const [input, setInput] = useState('');
+  const [query, setQuery] = useState('');
+  const [adSummary, setAdSummary] = useState<UIAdSummary | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const pendingImageFile = useRef<File | null>(null);
+  const endRef = useRef<HTMLDivElement | null>(null);
+  const handledUpsertRef = useRef(false);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  // auto-scroll disabled
+
+  const loadConversations = useCallback(
+    (sock: Socket) => {
+      sock.emit(
+        'chat:conversation:list',
+        {},
+        (ack: SocketAck<ConversationListItem[]>) => {
+          if (!ack.success) {
+            toast.error(ack.message || 'Conversations load failed');
+            return;
+          }
+
+          const sorted = ack.data ?? [];
+          setConversations(sorted);
+          if (!activeId && sorted.length) {
+            setActiveId(String(sorted[0].id));
+          }
+        }
+      );
+    },
+    [activeId]
+  );
+
+  const listMessages = useCallback(
+    (conversationId: string, sock: Socket) => {
+      if (!myId) return;
+
+      sock.emit(
+        'chat:message:list',
+        { conversationId, limit: 50 },
+        (ack: SocketAck<MessagePayload[]>) => {
+          if (!ack.success || !ack.data) {
+            toast.error(ack.message || 'Messages load failed');
+            return;
+          }
+
+          setMessages(buildMessages(ack.data ?? [], myId));
+        }
+      );
+
+      sock.emit(
+        'chat:conversation:join',
+        { conversationId },
+        (ack: SocketAck<unknown>) => {
+          if (!ack.success) {
+            toast.error(ack.message || 'Failed to join conversation');
+          }
+        }
+      );
+    },
+    [myId]
+  );
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [thread]);
+    ensureSocket()
+      .then(sock => {
+        if (!sock) return;
 
-  const send = () => {
+        setSocket(sock);
+        setLoading(false);
+
+        sock.on('connect', () => {
+          loadConversations(sock);
+        });
+
+        sock.on('chat:message:new', (msg: MessagePayload) => {
+          if (!myId) return;
+          setMessages(prev =>
+            mergeUniqueMessages(prev, buildMessages([msg], myId))
+          );
+        });
+
+        sock.on('disconnect', () => {
+          toast.error('চ্যাট সংযোগ বিচ্ছিন্ন হয়েছে');
+        });
+      })
+      .catch(() => {
+        toast.error('চ্যাট কানেকশনে সমস্যা হয়েছে');
+        setLoading(false);
+      });
+
+    return () => {
+      socketInstance?.off('chat:message:new');
+    };
+  }, [loadConversations, myId]);
+
+  useEffect(() => {
+    // set myId from access token payload
+    function detectUser() {
+      const token = getAccessTokenFromCookies();
+      if (!token) return;
+
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1] ?? ''));
+        if (payload?._id) setMyId(payload._id as string);
+      } catch {
+        // no-op
+      }
+    }
+
+    detectUser();
+  }, []);
+
+  useEffect(() => {
+    if (!socket || !activeId) return;
+
+    const activeConversation = conversations.find(
+      c => String(c.id) === String(activeId)
+    );
+    setAdSummary(activeConversation?.adSummary ?? null);
+
+    listMessages(activeId, socket);
+  }, [activeId, conversations, listMessages, socket]);
+
+  useEffect(() => {
+    if (!socket || !myId) return;
+
+    const adId = searchParams.get('adId');
+    const participantId = searchParams.get('participantId');
+
+    if (!adId || !participantId) return;
+    if (handledUpsertRef.current) return;
+
+    handledUpsertRef.current = true;
+
+    socket.emit(
+      'chat:conversation:upsert',
+      { adId, participantId },
+      (ack: SocketAck<{ _id?: string; id?: string }>) => {
+        if (!ack?.success || !ack.data) {
+          handledUpsertRef.current = false;
+          toast.error(ack?.message || 'কথোপকথন শুরু করা যাচ্ছে না');
+          router.replace('/chat', { scroll: false });
+          return;
+        }
+
+        const conversationId = ack.data._id ?? ack.data.id;
+
+        if (conversationId) {
+          setActiveId(String(conversationId));
+          loadConversations(socket);
+        }
+
+        router.replace('/chat', { scroll: false });
+      }
+    );
+  }, [loadConversations, myId, router, searchParams, socket]);
+
+  const filteredConversations = useMemo(() => {
+    if (!query) return conversations;
+    return conversations.filter(c =>
+      c.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [conversations, query]);
+
+  const handleSend = useCallback(() => {
+    if (!socket || !activeId || !input.trim()) return;
     const text = input.trim();
-    if (!text) return;
-    setThread((t) => [
-      ...t,
-      { id: Math.random().toString(36).slice(2), fromMe: true, text, time: "now" },
-    ]);
-    setInput("");
-  };
 
-  const pickImage = () => {
+    setSending(true);
+    socket.emit(
+      'chat:message:send',
+      {
+        conversationId: activeId,
+        text,
+      },
+      (ack: SocketAck<MessagePayload>) => {
+        setSending(false);
+
+        const created = ack.data;
+        if (!ack.success || !created) {
+          toast.error(ack.message || 'বার্তা পাঠাতে ব্যর্থ');
+          return;
+        }
+
+        if (myId) {
+          setMessages(prev =>
+            mergeUniqueMessages(prev, buildMessages([created], myId))
+          );
+        }
+        setInput('');
+      }
+    );
+  }, [activeId, input, myId, socket]);
+
+  const triggerFilePicker = () => {
     fileInputRef.current?.click();
   };
 
-  const onFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const file = e.target.files?.[0];
+  const handleFileChange: React.ChangeEventHandler<
+    HTMLInputElement
+  > = event => {
+    const file = event.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      // For simplicity only preview images for now
-      setPreviewUrl(null);
-      setDialogOpen(true);
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('শুধুমাত্র ছবি আপলোড করা যাবে।');
       return;
     }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    setDialogOpen(true);
+
+    pendingImageFile.current = file;
+    setPreviewUrl(URL.createObjectURL(file));
+    setPreviewOpen(true);
   };
 
-  const confirmSendImage = () => {
-    if (previewUrl) {
-      setThread((t) => [
-        ...t,
-        { id: Math.random().toString(36).slice(2), fromMe: true, image: previewUrl, time: "now" },
-      ]);
+  const uploadAttachment = async (): Promise<string | null> => {
+    if (!pendingImageFile.current) return null;
+    if (!socket) return null;
+
+    const formData = new FormData();
+    formData.append('image', pendingImageFile.current);
+
+    const token = getAccessTokenFromCookies();
+    if (!token) {
+      toast.error('লগইন সেশন পাওয়া যায়নি');
+      return null;
     }
-    setDialogOpen(false);
-    // Do not revoke immediately to keep showing in thread; in real app upload & store URL
+
+    try {
+      setUploading(true);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API}/chat/attachment/image`,
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const json = await res.json();
+
+      if (!json.success) {
+        throw new Error(json.message || 'Upload failed');
+      }
+
+      return json.data?.url as string;
+    } catch {
+      toast.error('ছবি আপলোড করা যায়নি');
+      return null;
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const active = useMemo(() => mockConversations.find((c) => c.id === activeId)!, [activeId]);
+  const confirmImageSend = async () => {
+    if (!socket || !activeId || !pendingImageFile.current) {
+      setPreviewOpen(false);
+      pendingImageFile.current = null;
+      return;
+    }
+
+    const uploadedUrl = await uploadAttachment();
+    if (!uploadedUrl) {
+      return;
+    }
+
+    setSending(true);
+    socket.emit(
+      'chat:message:send',
+      {
+        conversationId: activeId,
+        attachment: {
+          type: 'image',
+          url: uploadedUrl,
+          name: pendingImageFile.current?.name,
+          size: pendingImageFile.current?.size,
+        },
+      },
+      (ack: SocketAck<MessagePayload>) => {
+        setSending(false);
+        setPreviewOpen(false);
+        pendingImageFile.current = null;
+        setPreviewUrl(null);
+
+        const created = ack.data;
+        if (!ack.success || !created) {
+          toast.error(ack.message || 'ছবি পাঠানো যায়নি');
+          return;
+        }
+
+        if (myId) {
+          setMessages(prev =>
+            mergeUniqueMessages(prev, buildMessages([created], myId))
+          );
+        }
+      }
+    );
+  };
+
+  const activeConversationMeta: UIConversation | null = useMemo(() => {
+    const active = conversations.find(c => String(c.id) === String(activeId));
+    if (!active) return null;
+
+    return {
+      id: String(active.id),
+      name: active.name,
+      avatar: active.avatar || '',
+      lastMessage: active.lastMessage ?? '',
+      lastTime: formatDateTimeLabel(active.lastTime),
+      unread: active.unreadCount,
+    };
+  }, [activeId, conversations]);
+
+  if (loading) {
+    return (
+      <div className="flex h-full min-h-[70vh] items-center justify-center text-muted-foreground">
+        Loading chat...
+      </div>
+    );
+  }
+
+  if (!socket || !activeConversationMeta || !myId) {
+    return (
+      <div className="flex h-full min-h-[70vh] flex-col items-center justify-center gap-3 text-center">
+        <UploadCloud className="h-12 w-12 text-muted-foreground" />
+        <p className="text-muted-foreground">
+          চ্যাট ব্যবহার করতে লগইন করে অন্তত একটি কথোপকথন শুরু করুন।
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div className="screen-height bg-muted/30">
-        <div className="mx-auto px-4 py-6">
-          <div className="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)_360px]">
-            {/* Sidebar (desktop) */}
+      <div className="h-[calc(100vh-131px)] overflow-hidden bg-muted/30">
+        <div className="mx-auto h-full px-4 py-3 overflow-hidden">
+          <div className="grid h-full min-h-0 grid-cols-1 gap-3 lg:grid-cols-[320px_minmax(0,1fr)_360px] lg:gap-4">
             <Sidebar
-              className="hidden lg:block rounded-xl border bg-card"
-              conversations={filtered}
-              activeId={activeId}
-              onSelect={(id) => setActiveId(id)}
+              className="hidden h-full min-h-0 overflow-hidden rounded-xl border bg-card lg:block"
+              conversations={filteredConversations.map(c => ({
+                id: String(c.id),
+                name: c.name,
+                avatar: c.avatar ?? '',
+                lastMessage: c.lastMessage ?? '',
+                lastTime: formatTimeLabel(c.lastTime),
+                unread: c.unreadCount || undefined,
+              }))}
+              activeId={activeConversationMeta.id}
+              onSelect={id => setActiveId(id)}
               query={query}
               setQuery={setQuery}
             />
 
-            {/* Mobile Sheet trigger */}
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" className="lg:hidden inline-flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="inline-flex items-center gap-2 lg:hidden"
+                >
                   <MessageCircle className="h-4 w-4" /> Chats
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-[90vw] sm:w-96">
+              <SheetContent side="left" className="w-[90vw] p-0 sm:w-96">
                 <SheetHeader className="p-4">
                   <SheetTitle>Chats</SheetTitle>
                 </SheetHeader>
                 <Sidebar
                   className="rounded-none"
-                  conversations={filtered}
-                  activeId={activeId}
-                  onSelect={(id) => {
+                  conversations={filteredConversations.map(c => ({
+                    id: String(c.id),
+                    name: c.name,
+                    avatar: c.avatar ?? '',
+                    lastMessage: c.lastMessage ?? '',
+                    lastTime: formatTimeLabel(c.lastTime),
+                    unread: c.unreadCount || undefined,
+                  }))}
+                  activeId={activeConversationMeta.id}
+                  onSelect={id => {
                     setActiveId(id);
                     setSheetOpen(false);
                   }}
@@ -198,46 +551,56 @@ export default function ChatPage() {
               </SheetContent>
             </Sheet>
 
-            {/* Thread */}
-            <ScrollArea className="rounded-xl border bg-card flex flex-col h-[calc(100vh-200px)]">
-              <ChatHeader name={active.name} avatar={active.avatar} />
+            <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border bg-card">
+              <ChatHeader
+                name={activeConversationMeta.name}
+                avatar={activeConversationMeta.avatar}
+                status="Active now"
+              />
               <Separator />
-
-              <Messages thread={thread} endRef={endRef} />
+              <Messages thread={messages} endRef={endRef} />
               <Composer
                 input={input}
                 setInput={setInput}
-                onSend={send}
-                onPickImage={pickImage}
+                onSend={handleSend}
+                onPickImage={triggerFilePicker}
                 fileInput={fileInputRef}
-                onFileChange={onFileChange}
+                onFileChange={handleFileChange}
+                disabled={sending}
               />
-            </ScrollArea>
+            </div>
 
-            {/* Ad summary */}
-            <AdSummary ad={adSummary} />
+            <AdSummaryPanel ad={adSummary} />
           </div>
         </div>
       </div>
 
-      {/* Attachment preview dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Send attachment</DialogTitle>
+            <DialogTitle>ছবি পাঠাবেন?</DialogTitle>
           </DialogHeader>
           {previewUrl ? (
             <div className="relative aspect-4/3 w-full overflow-hidden rounded-md">
-              <Image src={previewUrl as string} alt="preview" fill className="object-cover" unoptimized />
+              <Image
+                src={previewUrl}
+                alt="preview"
+                fill
+                className="object-cover"
+              />
             </div>
           ) : (
-            <div className="text-sm text-muted-foreground">Preview not available. Send this file?</div>
+            <div className="text-sm text-muted-foreground">
+              প্রিভিউ লোড করা যায়নি
+            </div>
           )}
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button onClick={confirmSendImage}>Send</Button>
+            <Button disabled={uploading || sending} onClick={confirmImageSend}>
+              {uploading ? 'Uploading...' : 'Send'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
