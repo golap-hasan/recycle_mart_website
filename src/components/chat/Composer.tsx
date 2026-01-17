@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Image as ImageIcon, Smile, Send } from 'lucide-react';
+import { Image as ImageIcon, Send } from 'lucide-react';
 
 type Props = {
   input: string;
