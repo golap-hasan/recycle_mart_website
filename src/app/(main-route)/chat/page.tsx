@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { io, Socket } from 'socket.io-client';
-import { toast } from 'sonner';
 import { MessageCircle, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -36,6 +35,7 @@ import type {
 } from '@/components/chat/types';
 import { getAccessTokenFromCookies } from '@/lib/authClient';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { ErrorToast } from '@/lib/utils';
 
 type SocketAck<T> = {
   success: boolean;
@@ -172,7 +172,7 @@ const updateConversationPreview = (
   return next;
 };
 
-let socketInstance: Socket | null = null;
+let socketInstance: Socket | null = null; 
 
 async function ensureSocket(): Promise<Socket | null> {
   if (socketInstance) return socketInstance;
@@ -180,7 +180,7 @@ async function ensureSocket(): Promise<Socket | null> {
   const token = getAccessTokenFromCookies();
 
   if (!token) {
-    toast.error('আপনি লগইন করেননি। চ্যাট ব্যবহার করতে অনুগ্রহ করে লগইন করুন।');
+    ErrorToast('আপনি লগইন করেননি। চ্যাট ব্যবহার করতে অনুগ্রহ করে লগইন করুন।');
     return null;
   }
 
@@ -192,7 +192,7 @@ async function ensureSocket(): Promise<Socket | null> {
   });
 
   socketInstance.on('connect_error', (err: Error) => {
-    toast.error(err.message || 'Socket connection failed');
+    ErrorToast(err.message || 'Socket connection failed');
   });
 
   return socketInstance;
@@ -237,7 +237,7 @@ export default function ChatPage() {
         {},
         (ack: SocketAck<ConversationListItem[]>) => {
           if (!ack.success) {
-            toast.error(ack.message || 'Conversations load failed');
+            ErrorToast(ack.message || 'Conversations load failed');
             return;
           }
 
@@ -261,7 +261,7 @@ export default function ChatPage() {
         { conversationId, limit: 50 },
         (ack: SocketAck<MessagePayload[]>) => {
           if (!ack.success || !ack.data) {
-            toast.error(ack.message || 'Messages load failed');
+            ErrorToast(ack.message || 'Messages load failed');
             return;
           }
 
@@ -274,7 +274,7 @@ export default function ChatPage() {
         { conversationId },
         (ack: SocketAck<unknown>) => {
           if (!ack.success) {
-            toast.error(ack.message || 'Failed to join conversation');
+            ErrorToast(ack.message || 'Failed to join conversation');
           }
         },
       );
@@ -315,11 +315,11 @@ export default function ChatPage() {
         });
 
         sock.on('disconnect', () => {
-          toast.error('চ্যাট সংযোগ বিচ্ছিন্ন হয়েছে');
+          ErrorToast('চ্যাট সংযোগ বিচ্ছিন্ন হয়েছে');
         });
       })
       .catch(() => {
-        toast.error('চ্যাট কানেকশনে সমস্যা হয়েছে');
+        ErrorToast('চ্যাট কানেকশনে সমস্যা হয়েছে');
         setLoading(false);
       });
 
@@ -373,7 +373,7 @@ export default function ChatPage() {
       (ack: SocketAck<{ _id?: string; id?: string }>) => {
         if (!ack?.success || !ack.data) {
           handledUpsertRef.current = false;
-          toast.error(ack?.message || 'কথোপকথন শুরু করা যাচ্ছে না');
+          ErrorToast(ack?.message || 'কথোপকথন শুরু করা যাচ্ছে না');
           router.replace('/chat', { scroll: false });
           return;
         }
@@ -413,7 +413,7 @@ export default function ChatPage() {
 
         const created = ack.data;
         if (!ack.success || !created) {
-          toast.error(ack.message || 'বার্তা পাঠাতে ব্যর্থ');
+          ErrorToast(ack.message || 'বার্তা পাঠাতে ব্যর্থ');
           return;
         }
 
@@ -451,7 +451,7 @@ export default function ChatPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      toast.error('শুধুমাত্র ছবি আপলোড করা যাবে।');
+      ErrorToast('শুধুমাত্র ছবি আপলোড করা যাবে।');
       return;
     }
 
@@ -469,7 +469,7 @@ export default function ChatPage() {
 
     const token = getAccessTokenFromCookies();
     if (!token) {
-      toast.error('লগইন সেশন পাওয়া যায়নি');
+      ErrorToast('লগইন সেশন পাওয়া যায়নি');
       return null;
     }
 
@@ -494,7 +494,7 @@ export default function ChatPage() {
 
       return json.data?.url as string;
     } catch {
-      toast.error('ছবি আপলোড করা যায়নি');
+      ErrorToast('ছবি আপলোড করা যায়নি');
       return null;
     } finally {
       setUploading(false);
@@ -533,7 +533,7 @@ export default function ChatPage() {
 
         const created = ack.data;
         if (!ack.success || !created) {
-          toast.error(ack.message || 'ছবি পাঠানো যায়নি');
+          ErrorToast(ack.message || 'ছবি পাঠানো যায়নি');
           return;
         }
 
